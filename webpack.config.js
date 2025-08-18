@@ -1,20 +1,22 @@
-const path = require('path')
-const autoprefixer = require('autoprefixer')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const miniCssExtractPlugin = require('mini-css-extract-plugin')
+const path = require('path');
+const autoprefixer = require('autoprefixer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     mode: "production",
-    entry: [
-        './src/static_assets/js/fl-explore.js'
-    ],
+    entry: {
+        'fl-explore': './frontend/js/fl-explore.js',
+        'fl-table': './frontend/js/fl-table.js',
+        'fl-chart': './frontend/js/fl-chart.js',
+    },
     output: {
-        // path: path.resolve(__dirname, 'staticfiles'),
-        filename: 'staticfiles/fl-explore.js',
+        filename: 'js/[name].js',
+        path: path.resolve(__dirname, 'staticfiles'),
     },
     plugins: [
         new HtmlWebpackPlugin(),
-        new miniCssExtractPlugin()
+        new MiniCssExtractPlugin()
     ],
     module: {
         rules: [
@@ -23,7 +25,7 @@ module.exports = {
                 use: [
                     {
                         // Extracts CSS for each JS file that includes CSS
-                        loader: miniCssExtractPlugin.loader
+                        loader: MiniCssExtractPlugin.loader
                     },
                     {
                         // Interprets `@import` and `url()` like `import/require()` and will resolve them
@@ -33,11 +35,11 @@ module.exports = {
                         // Loader for webpack to process CSS with PostCSS
                         loader: 'postcss-loader',
                         options: {
-                          postcssOptions: {
+                            postcssOptions: {
                             plugins: [
-                              autoprefixer
+                                autoprefixer
                             ]
-                          }
+                            }
                         }
                     },
                     {
@@ -48,4 +50,4 @@ module.exports = {
             }
         ]
     }
-}
+};

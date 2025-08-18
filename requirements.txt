@@ -10,15 +10,14 @@ django-q2
 rich
 python-dateutil
 jinja2
-# defusedxml
-# django-guardian
 django_bootstrap5
 pydantic
 xmltodict
 python-json-logger
 django_extensions
 records
-pywin32
 psutil
 pygments
 uuid_utils
+psycopg2-binary
+pywin32 ; sys_platform == 'win32'

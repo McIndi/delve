@@ -257,7 +257,7 @@ logging.config.dictConfig(
             "file": {
                 "level": LOG_LEVEL,
                 "class": "logging.handlers.RotatingFileHandler",
-                "filename": BASE_DIR / "log" / f"{os.getpid()}-{sys.argv[1]}.log",
+                "filename": BASE_DIR / "log" / f"{os.getpid()}.log",
                 "mode": "a",
                 "maxBytes": 5242880,
                 "backupCount": 10,
@@ -433,13 +433,13 @@ Q_CLUSTER = {
     'orm': os.getenv('DELVE_Q_CLUSTER_ORM', 'default')
 }
 
-python = BASE_DIR / 'python' / os.getenv('DELVE_PYTHON_VERSION', '3.13.2') / 'python.exe'
-syslog_script = BASE_DIR / 'utilities' / 'cli' / 'syslog-receiver.py'
-# syslog_command = f'{python} {syslog_script} --server http://127.0.0.1:8000 --index datapower_logs --tcp-cert C:/Users/cliff/projects/mast3/build/assemble/etc/crypto/cert/mast.crt --tcp-key C:/Users/cliff/projects/mast3/build/assemble/etc/crypto/private/mast.key -u DELVE_USER -p DELVE_PASSWORD --line-ending linux --tcp --tcp-port 1514 --hostname 192.168.0.190 -vvvvvv'
-
+# Delve service commands, If service.py is used to create a Windows Service
+# Then these are commands that will be run. They are expected to stay running
+# and will be restarted if they exit.
 DELVE_SERVICE_COMMANDS = [
     str(BASE_DIR / 'fl.bat') + ' serve',
     str(BASE_DIR / 'fl.bat') + ' qcluster',
-    # syslog_command,
 ]
+
+# The number of seconds to sleep between health checks on child processes
 DELVE_SERVICE_INTERVAL = int(os.getenv('DELVE_SERVICE_INTERVAL', 5))

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "delve"
+version = "0.8.0-dev"
+description = "A Django-based project."
+authors = [ { name = "notesofcliff" } ]
+requires-python = ">=3.8"
+dependencies = [
+    "requests",
+    "django",
+    "djangorestframework",
+    "markdown",
+    "django-debug-toolbar",
+    "cherrypy",
+    "whitenoise",
+    "croniter",
+    "django-q2",
+    "rich",
+    "python-dateutil",
+    "jinja2",
+    "django_bootstrap5",
+    "pydantic",
+    "xmltodict",
+    "python-json-logger",
+    "django_extensions",
+    "records",
+    "psutil",
+    "pygments",
+    "uuid_utils",
+]
+
+[project.optional-dependencies]
+postgres = ["psycopg2-binary"]
+windows = ["pywin32"]
