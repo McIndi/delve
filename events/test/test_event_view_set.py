@@ -45,7 +45,7 @@ class EventViewsetTests(APITestCase):
         super().setUp(*args, **kwargs)
 
     def test_create_event_unauthenticated_fails(self):
-        """Ensure we receive a HTTP 401 UNAUTHORIZED when attampting to create
+        """Ensure we receive a HTTP 401 UNAUTHORIZED when attempting to create
         an event without authenticating.
         """
         
@@ -61,8 +61,8 @@ class EventViewsetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Event.objects.count(), 0)
 
-    def test_create_event_authenticated_succedes(self):
-        """Ensure we receive a HTTP 201 CREATED when attampting to create
+    def test_create_event_authenticated_succeeds(self):
+        """Ensure we receive a HTTP 201 CREATED when attempting to create
         an event with proper authentication.
         """
         url = reverse('event-list')
