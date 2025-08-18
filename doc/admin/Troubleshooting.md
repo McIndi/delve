@@ -8,7 +8,7 @@ Here are some common issues you might encounter and their solutions:
 - **Server Not Starting**: Check the logs for error messages. Ensure that all required services (e.g., database) are running.
 - **Database Connection Issues**: Verify the database settings in `settings.py`. Ensure that the database server is running and accessible.
 - **Permission Errors**: Ensure that the user running the Delve server has the necessary permissions to access files and directories.
-- **Missing Migrations**: Run `fl showmigrations` and `fl migrate` to ensure that all database migrations are applied.
+- **Missing Migrations**: Run `python manage.py showmigrations` and `python manage.py migrate` to ensure that all database migrations are applied.
 - **Queries Running Slowly**: Check `settings.py` to ensure that DEBUG is set to False and that Debug level logging is not enabled.
 
 ## Using Django Debug Toolbar
@@ -30,13 +30,13 @@ The Django Debug Toolbar, which comes pre-installed but disabled, is a helpful t
 Django Extensions provides additional management commands and utilities for Django projects. Django Extensions are installed and enabled by default in Delve.
 
 Some useful commands include:
-   - **`./fl shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
+   - **`python manage.py shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
      ```bash
-     fl shell_plus
+     python manage.py shell_plus
      ```
-   - **`./fl graph_models`**: Creates a GraphViz dot file (or JSON file) for the specified app names.
+   - **`python manage.py graph_models`**: Creates a GraphViz dot file (or JSON file) for the specified app names.
      ```bash
-     fl graph_models events
+     python manage.py graph_models events
      ```
 
 ## Checking Logs

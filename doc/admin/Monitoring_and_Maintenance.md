@@ -10,51 +10,51 @@ Monitoring the health of your Delve instance involves keeping an eye on system r
 - **Performance Metrics**: Monitor response times, request rates, and other performance metrics to identify potential bottlenecks and optimize performance. The logging system can be fine-tuned to gain insights into these metrics without allowing the logs to become overly verbose.
 
 ## Using Django Management Commands
-Django provides several management commands that are useful for monitoring and maintaining your Delve instance. Some key commands include (see the output of `./fl --help` for a complete list):
+Django provides several management commands that are useful for monitoring and maintaining your Delve instance. Some key commands include (see the output of `python manage.py --help` for a complete list):
 
-- **`./fl check`**: Checks the entire Django project for potential problems.
+- **`python manage.py check`**: Checks the entire Django project for potential problems.
 
     ```bash
-    ./fl check
+    python manage.py check
     ```
 
-- **`./fl showmigrations`**: Lists all migrations and their status.
+- **`python manage.py showmigrations`**: Lists all migrations and their status.
 
     ```bash
-    ./fl showmigrations
+    python manage.py showmigrations
     ```
 
-- **`./fl migrate`**: Applies database migrations.
+- **`python manage.py migrate`**: Applies database migrations.
 
     ```bash
-    ./fl migrate
+    python manage.py migrate
     ```
 
-- **`./fl test`**: Runs the unittest test suite
+- **`python manage.py test`**: Runs the unittest test suite
 
     ```bash
-    ./fl test
+    python manage.py test
     ```
 
 ### Django Extension Commands
 
 The Django Extensions module provides a number of helpful commands. Here are some of the more useful ones in the context of Delve:
 
-- **`./fl shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
+- **`python manage.py shell_plus`**: An enhanced version of the Django shell with autoloading of models and other conveniences.
     ```bash
-    ./fl shell_plus
+    python manage.py shell_plus
     ```
-- **`./fl graph_models`**: Generates a visual representation of your Django models.
+- **`python manage.py graph_models`**: Generates a visual representation of your Django models.
     ```bash
-    ./fl graph_models -a -o models.png
+    python manage.py graph_models -a -o models.png
     ```
-- **`./fl show_urls`**: Displays all the URL patterns in your project.
+- **`python manage.py show_urls`**: Displays all the URL patterns in your project.
     ```bash
-    ./fl show_urls
+    python manage.py show_urls
     ```
-- **`./fl sqldiff`**: Compares the database schema with your models and displays differences.
+- **`python manage.py sqldiff`**: Compares the database schema with your models and displays differences.
     ```bash
-    ./fl sqldiff
+    python manage.py sqldiff
     ```
 
 ## Performing Backups
@@ -65,10 +65,10 @@ Use the `dumpdata` command to export data from the database to a JSON file. This
 
 ```bash
 # Back up the entire database
-fl dumpdata > backup.json
+python manage.py dumpdata > backup.json
 
 # Back up specific apps (e.g., users, auth)
-fl dumpdata users auth > backup_users_auth.json
+python manage.py dumpdata users auth > backup_users_auth.json
 ```
 
 ### Restoring Data
@@ -76,10 +76,10 @@ Use the `loaddata` command to import data from a JSON file into the database. Th
 
 ```bash
 # Restore data from a backup file
-fl loaddata backup.json
+python manage.py loaddata backup.json
 
 # Restore specific apps (e.g., users, auth)
-fl loaddata backup_users_auth.json
+python manage.py loaddata backup_users_auth.json
 ```
 
 ### Custom User Model

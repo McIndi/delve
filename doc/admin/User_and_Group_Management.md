@@ -7,7 +7,7 @@ Creating users and groups, as well as assigning permissions, is an essential par
 The following command can be used to create an Admin user from the command line:
 
 ```python
-./fl createsuperuser
+python manage.py createsuperuser
 ```
 
 ## Creating Users

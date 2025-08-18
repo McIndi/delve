@@ -6,7 +6,7 @@ Implementing security best practices is crucial for protecting your Delve instan
 The `SECRET_KEY` setting in `settings.py` is a critical component of your Django project's security. It is used for cryptographic signing and should be kept secret. Here are some best practices for managing the `SECRET_KEY`:
 
 - **Keep It Secret**: Never share your `SECRET_KEY` or commit it to version control.
-- **Use a Strong Key**: Generate a strong, random key. You can use tools like `./fl gen-secret-key` to generate a new key.
+- **Use a Strong Key**: Generate a strong, random key. You can use tools like `python manage.py gen-secret-key` to generate a new key.
 - **Rotate Secret Keys**: The `SECRET_KEY_FALLBACKS` can be set to a list of fallback secret keys for a particular Django installation. These are used to allow rotation of the `SECRET_KEY`.
 - **Environment Variables**: Store the `SECRET_KEY` in an environment variable and read it in `settings.py`. For example:
   ```python
