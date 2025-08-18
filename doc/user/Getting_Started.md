@@ -71,7 +71,7 @@ Delve provides search-based and processor-based alerts:
 - **Processor-based Alerts**: Triggered during data ingestion based on event sourcetype.
 
 ## Installation
-For installation instructions, please refer to the [Delve Administration Manual](../administration/index.md). The User Manual assumes that Delve is already installed and configured.
+For installation instructions, please refer to the [Delve Administration Manual](../administration/index.md). Administrators who need a scripted build can follow the [Bootstrap Guide](../admin/Bootstrap_Guide.md). The User Manual assumes that Delve is already installed and configured.
 
 ## Logging In
 Once Delve is installed, you can log in to the web interface using the credentials provided by your administrator.
