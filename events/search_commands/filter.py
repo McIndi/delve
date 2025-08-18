@@ -29,7 +29,7 @@ lookup_map = {
     "startswith": lambda lhs, rhs: lhs.startswith(rhs),
     "istartswith": lambda lhs, rhs: lhs.lower().startswith(rhs.lower()),
     "endswith": lambda lhs, rhs: lhs.endswith(rhs),
-    "iendswith": lambda lhs, rhs: lhs.lower().endswith(rhs.lower),
+    "iendswith": lambda lhs, rhs: lhs.lower().endswith(rhs.lower()),
     "isnull": lambda lhs, rhs: lhs is None if rhs is True else lhs is not None,
     "regex": lambda lhs, rhs: re.search(rhs, lhs),
     "iregex": lambda lhs, rhs: re.search(rhs, lhs, re.I),
