@@ -36,6 +36,7 @@ jobs:
         shell: cmd
       - name: Run bootstrap script
         run: python bootstrap.py all
+        shell: cmd
       - name: Prepare settings and urls
         run: |
           copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
