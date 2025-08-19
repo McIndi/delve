@@ -28,6 +28,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24.4.1'  # or your required version
+      - name: Check npm location
+        run: where npm
+        shell: cmd
+      - name: Print PATH
+        run: echo %PATH%
+        shell: cmd
       - name: Run bootstrap script
         run: python bootstrap.py all
       - name: Prepare settings and urls
