@@ -226,7 +226,7 @@ def run_npm_install(args):
     if args.dry_run:
         logging.info(f"Dry run: Would run: {' '.join(cmd)} in {cwd}")
         return
-    result = subprocess.run(cmd, cwd=str(cwd))
+    result = subprocess.run(cmd, cwd=str(cwd), shell=True)
     if result.returncode != 0:
         logging.error(f"npm install failed with exit code {result.returncode}")
         sys.exit(result.returncode)
@@ -240,7 +240,7 @@ def build_frontend(args):
     if args.dry_run:
         logging.info(f"Dry run: Would run: {' '.join(cmd)}")
         return
-    result = subprocess.run(cmd)
+    result = subprocess.run(cmd, shell=True)
     if result.returncode != 0:
         logging.error(f"webpack build failed with exit code {result.returncode}")
         sys.exit(result.returncode)
