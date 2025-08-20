@@ -5,6 +5,7 @@ Modular, testable, and focused on the current platform only.
 import sys
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import logging
@@ -226,7 +227,7 @@ def run_npm_install(args):
     if args.dry_run:
         logging.info(f"Dry run: Would run: {' '.join(cmd)} in {cwd}")
         return
-    result = subprocess.run(cmd, cwd=str(cwd), shell=True)
+    result = subprocess.run(shlex.join(cmd), cwd=str(cwd), shell=True)
     if result.returncode != 0:
         logging.error(f"npm install failed with exit code {result.returncode}")
         sys.exit(result.returncode)
@@ -240,7 +241,7 @@ def build_frontend(args):
     if args.dry_run:
         logging.info(f"Dry run: Would run: {' '.join(cmd)}")
         return
-    result = subprocess.run(cmd, shell=True)
+    result = subprocess.run(shlex.join(cmd), shell=True)
     if result.returncode != 0:
         logging.error(f"webpack build failed with exit code {result.returncode}")
         sys.exit(result.returncode)
