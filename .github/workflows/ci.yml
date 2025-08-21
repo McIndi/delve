@@ -23,9 +23,20 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r build-requirements.txt
-      - name: Run build script
-        run: python build.py
+          pip install -r requirements.txt
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.4.1'  # or your required version
+      - name: Check npm location
+        run: where npm
+        shell: cmd
+      - name: Print PATH
+        run: echo %PATH%
+        shell: cmd
+      - name: Run bootstrap script
+        run: python bootstrap.py all
+        shell: cmd
       - name: Prepare settings and urls
         run: |
           copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
@@ -34,7 +45,7 @@ jobs:
         shell: cmd
         run: |
           cd build\assemble
-          ./fl.bat test
+          dlv.bat test
 
   build-and-test-linux:
     name: Build and Test on Ubuntu
@@ -51,9 +62,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r build-requirements.txt
-      - name: Run build script
-        run: python build.py
+          pip install -r requirements.txt
+      - name: Run bootstrap script
+        run: python bootstrap.py all
       - name: Prepare settings and urls
         run: |
           cp build/assemble/delve/example-settings.py build/assemble/delve/settings.py
@@ -61,7 +72,7 @@ jobs:
       - name: Run test suite
         run: |
           cd build/assemble
-          ./fl test
+          ./dlv test
 
 # Notifications:
 # - GitHub will show pass/fail in the UI and send email to repository watchers if enabled.
