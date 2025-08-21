@@ -77,6 +77,18 @@ pip install -r requirements.txt
 
 If you need to update dependencies, edit `requirements.txt` directly.
 
+
+## Using Delve with Docker
+
+After building and running the Docker image, you need to initialize the database and create a superuser inside the running container:
+
+```bash
+docker exec <container_id_or_name> python3 /app/manage.py migrate
+docker exec -it <container_id_or_name> python3 /app/manage.py createsuperuser
+```
+
+Replace `<container_id_or_name>` with your actual container ID or name.
+
 Visit http://127.0.0.1:8000/ in your browser to access the web UI.
 
 ## Advanced: Automated Build & Packaging For Air-Gapped Systems
