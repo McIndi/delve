@@ -52,8 +52,8 @@ If you encounter issues that you cannot resolve, consider accessing support reso
 - **Django Documentation**: [https://docs.djangoproject.com/](https://docs.djangoproject.com/)
 - **Django Rest Framework Documentation**: [https://www.django-rest-framework.org/](https://www.django-rest-framework.org/)
 - **Django Extensions Documentation**: [https://django-extensions.readthedocs.io/](https://django-extensions.readthedocs.io/)
-- **Delve Documentation**: Included with every Delve documentation in the `doc` directory, available in the Delve Web UI (default http://127.0.0.1:8000/docs/) and in the [Github Repository](https://github.com/DelveCorp/delve/blob/main/src/home/doc/index)
-- **Delve Community**: Refer our [Github Repository](https://github.com/DelveCorp/delve) for reporting issues, submitting feature requests, and contacting the project maintainers.
+- **Delve Documentation**: Included with every Delve documentation in the `doc` directory, available in the Delve Web UI (default http://127.0.0.1:8000/docs/) and in the [Github Repository](https://github.com/notesofcliff/delve/blob/main/src/home/doc/index)
+- **Delve Community**: Refer our [Github Repository](https://github.com/notesofcliff/delve) for reporting issues, submitting feature requests, and contacting the project maintainers.
 
 By following these troubleshooting techniques and utilizing available resources, you can effectively diagnose and resolve issues with your Delve instance.
 

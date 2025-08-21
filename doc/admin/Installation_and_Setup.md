@@ -14,7 +14,7 @@ Before installing Delve, ensure your system meets the following requirements:
 ## Installation Steps
 Follow these steps to install Delve:
 
-1. **Download Delve**: Download the latest release from the [releases page](https://github.com/DelveCorp/delve/releases).
+1. **Download Delve**: Download the latest release from the [releases page](https://github.com/notesofcliff/delve/releases).
 2. **Extract Files**: Unzip the downloaded file to your desired location.
 3. **Configure Settings**: Copy the example settings and URL files.
 
