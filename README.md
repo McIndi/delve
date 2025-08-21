@@ -22,7 +22,7 @@ Delve is a powerful, extensible platform for ingesting, transforming, and search
 
 ### 1. Clone the repository
 ```bash
-git clone <your-fork-or-upstream-url>
+git clone https://github.com/notesofcliff/delve
 cd delve
 ```
 
