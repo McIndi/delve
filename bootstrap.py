@@ -5,6 +5,7 @@ Modular, testable, and focused on the current platform only.
 import sys
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import logging
@@ -25,7 +26,7 @@ def setup_logging(log_level, log_file=None):
     """
     log_file = log_file or (__here__ / "bootstrap.log")
     log_level_value = getattr(logging, log_level)
-    formatter = logging.Formatter("%(levelname)s: %(process)d: %(threadName)s: %(module)s: %(pathname)s: %(funcName)s: %(lineno)d: %(asctime)s: %(message)s")
+    formatter = logging.Formatter("%(levelname)s: %(name)s: %(process)d: %(threadName)s: %(module)s: %(pathname)s: %(funcName)s: %(lineno)d: %(asctime)s: %(message)s")
 
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level_value)
@@ -221,12 +222,16 @@ def run_pip_install(args):
 def run_npm_install(args):
     """Run npm install in the specified directory."""
     npm_exe = args.npm_executable or "npm"
+    logging.debug(f"Using npm executable: {npm_exe}")
     cwd = args.directory or __here__
-    cmd = [npm_exe, "install"]
+    logging.debug(f"Using working directory: {cwd}")
+    cmd = f"{npm_exe} install"
+    logging.debug(f"Running command: {cmd} in {cwd}")
     if args.dry_run:
-        logging.info(f"Dry run: Would run: {' '.join(cmd)} in {cwd}")
+        logging.info(f"Dry run: Would run: {cmd} in {cwd}")
         return
-    result = subprocess.run(cmd, cwd=str(cwd))
+    result = subprocess.run(cmd, cwd=str(cwd), shell=True)
+    logging.debug(f"Command output: {result.stdout}")
     if result.returncode != 0:
         logging.error(f"npm install failed with exit code {result.returncode}")
         sys.exit(result.returncode)
@@ -235,12 +240,16 @@ def run_npm_install(args):
 def build_frontend(args):
     """Run npx webpack build."""
     npx_exe = args.npx_executable or "npx"
+    logging.debug(f"Using npx executable: {npx_exe}")
     config = args.webpack_config or __here__ / "webpack.config.js"
-    cmd = [npx_exe, "webpack", "--config", str(config)]
+    logging.debug(f"Using webpack config: {config}")
+    cmd = f"{npx_exe} webpack --config {str(config)}"
+    logging.debug(f"Running command: {cmd}")
     if args.dry_run:
-        logging.info(f"Dry run: Would run: {' '.join(cmd)}")
+        logging.info(f"Dry run: Would run: {cmd}")
         return
-    result = subprocess.run(cmd)
+    result = subprocess.run(cmd, shell=True)
+    logging.debug(f"Command output: {result.stdout}")
     if result.returncode != 0:
         logging.error(f"webpack build failed with exit code {result.returncode}")
         sys.exit(result.returncode)

@@ -1,7 +1,7 @@
 package-lock.json
 prompts.txt
 node_modules/
-src/home/staticfiles/*
+staticfiles/
 #-----------------------------
 
 # Below is a list of common python related .gitignore entries, above is custom 
