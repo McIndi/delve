@@ -61,6 +61,8 @@ Follow these steps to install Delve:
 
 **NOTE**: Utilities launched with `fl` are generally configured in settings.py, while utilities in `./utilities/cli/` are generally configured via command line arguments.
 
+For details on automating these steps into a repeatable build, see the [Bootstrap Guide](Bootstrap_Guide.md).
+
 ## Hosting with CherryPy
 
 Delve uses CherryPy to host the Django web app. The `serve` management command starts the CherryPy server to serve the Delve web UI.
