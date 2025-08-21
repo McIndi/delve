@@ -315,7 +315,7 @@ MEDIA_URL = os.getenv('DELVE_MEDIA_URL', "uploads/")  # Media URL
 
 # Delve-specific settings
 DELVE_AUTORELOAD = os.getenv('DELVE_AUTORELOAD', 'False') == 'True'
-DELVE_SERVER_HOST = os.getenv('DELVE_SERVER_HOST', '127.0.0.1')
+DELVE_SERVER_HOST = os.getenv('DELVE_SERVER_HOST', '0.0.0.0')
 DELVE_SERVER_PORT = int(os.getenv('DELVE_SERVER_PORT', 8000))
 DELVE_SERVER_LOG_STDOUT = os.getenv('DELVE_SERVER_LOG_STDOUT', 'False') == 'True'
 DELVE_MAX_REQUEST_BODY_SIZE = int(os.getenv('DELVE_MAX_REQUEST_BODY_SIZE', 104857600))
