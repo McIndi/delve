@@ -276,6 +276,5 @@ make_events --drop "field1" --drop "field2"
 make_events --save
 ```
 
----
 
-[Previous: Configuration](/doc/admin/Using_the_Web_UI.md) | [Next: User and Group Management](/doc/admin/User_and_Group_Management.md)
+[Previous: Configuration](/doc/admin/Configuration.md) | [Next: User and Group Management](/doc/admin/User_and_Group_Management.md)

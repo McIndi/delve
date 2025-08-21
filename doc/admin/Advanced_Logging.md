@@ -223,3 +223,6 @@ LOGGING = {
 ```
 
 This configuration ensures that log messages are properly formatted, significant events are logged, and critical issues are communicated to administrators.
+---
+
+[Previous: Scaling and Load Balancing](/doc/admin/Scaling_and_Load_Balancing.md)

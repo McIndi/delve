@@ -84,4 +84,4 @@ The Delve web interface consists of several key components:
 - **Explore UI**: A dynamic, universal search interface.
 - **Admin UI**: An administrative dashboard for managing users, data sources, and system settings.
 
-[Previous: Index](/doc/admin/index.md) | [Next: Installation and Setup](/doc/admin/Installation_and_Setup.md)
+[Next: Using the Web UI](/doc/user/Using_the_Web_UI.md)

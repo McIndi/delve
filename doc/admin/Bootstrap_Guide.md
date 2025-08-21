@@ -1,4 +1,3 @@
-
 # Bootstrap Guide
 
 The `bootstrap.py` script automates building and packaging Delve. Each step is a standalone subcommand so you can run parts individually or compose your own pipeline. A `--dry-run` flag is available on every command to show actions without making changes.
@@ -107,3 +106,8 @@ if __name__ == "__main__":
 ```
 
 Running `python custom_bootstrap.py package --assemble-dir build/assemble` executes the standard packaging step and then signs the resulting archive. Similar wrappers can intercept any other subcommand or compose entirely new workflows.
+
+
+---
+
+[Previous: Installation and Setup](/doc/admin/Installation_and_Setup.md) | [Next: Configuration](/doc/admin/Configuration.md)

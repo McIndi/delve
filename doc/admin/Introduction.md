@@ -57,6 +57,5 @@ As an administrator, you will be responsible for the following key tasks:
 
 By following the guidelines outlined in this manual and general best practices, you can effectively manage and maintain your Delve instance, ensuring that it operates smoothly and efficiently.
 
----
 
 [Previous: Table of Contents](/doc/admin/index.md) | [Next: Installation and Setup](/doc/admin/Installation_and_Setup.md)

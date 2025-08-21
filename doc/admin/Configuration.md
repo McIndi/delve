@@ -86,6 +86,5 @@ Delve has several specific configuration options that you can set in `settings.p
 
 Please see the provided `example-settings.py` which can be found in the Delve installation directory at `./delve/example-settings.py` for an example.
 
----
 
-[Previous: Installation and Setup](/doc/admin/Installation_and_Setup.md) | [Next: Ingesting Data](/doc/admin/Ingesting_Data.md)
+[Previous: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md) | [Next: Ingesting Data](/doc/admin/Ingesting_Data.md)

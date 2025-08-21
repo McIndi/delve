@@ -113,6 +113,5 @@ python service.py /?
 ### Installing Delve Supervisor Service on Other Platforms
 This feature is coming soon. Until then, please consult your operating system's documentation for information on hosting services (Systemd, etc.) to have Delve automatically started and monitored.
 
----
 
-[Previous: Introduction](/doc/admin/Introduction.md) | [Next: Configuration](/doc/admin/Configuration.md)
+[Previous: Introduction](/doc/admin/Introduction.md) | [Next: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md)

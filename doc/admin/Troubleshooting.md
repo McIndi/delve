@@ -57,6 +57,5 @@ If you encounter issues that you cannot resolve, consider accessing support reso
 
 By following these troubleshooting techniques and utilizing available resources, you can effectively diagnose and resolve issues with your Delve instance.
 
----
 
 [Previous: Security](/doc/admin/Security.md) | [Next: Performance Tuning](/doc/admin/Performance_Tuning.md)

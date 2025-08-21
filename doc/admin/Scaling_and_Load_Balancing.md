@@ -170,6 +170,5 @@ Delve uses several ports for different services. Here is a list of ports used by
 
 By following these scaling and load balancing strategies, you can ensure that your Delve instance can handle increased load and provide high availability.
 
----
 
 [Previous: Backup and Restore](/doc/admin/Backup_and_Restore.md) | [Next: Advanced Logging](/doc/admin/Advanced_Logging.md)

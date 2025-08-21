@@ -35,4 +35,4 @@ You can check the logs by navigating to the appropriate log files on your server
 
 ---
 
-[Previous: User Guide](/doc/user/User_Guide.md) | [Next: Usage Tips](/doc/user/Usage_Tips.md)
+[Previous: Usage Tips](/doc/user/Usage_Tips.md)

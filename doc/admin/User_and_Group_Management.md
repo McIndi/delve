@@ -50,6 +50,5 @@ To add a user to a group, follow these steps:
 
 By following these steps, you can effectively manage users, groups, and permissions in your Delve instance.
 
----
 
 [Previous: Ingesting Data](/doc/admin/Ingesting_Data.md) | [Next: Monitoring and Maintenance](/doc/admin/Monitoring_and_Maintenance.md)

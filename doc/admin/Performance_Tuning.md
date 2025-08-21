@@ -123,6 +123,5 @@ MIDDLEWARE = [
 
 By following these performance tuning techniques, you can optimize your Delve instance to handle large volumes of data and provide fast response times.
 
----
 
 [Previous: Troubleshooting](/doc/admin/Troubleshooting.md) | [Next: Backup and Restore](/doc/admin/Backup_and_Restore.md)

@@ -85,6 +85,5 @@ python manage.py loaddata backup_users_auth.json
 ### Custom User Model
 Delve includes a custom user model in the `users` app. However, the default Django `Group` and `Permission` models are used for managing user roles and permissions. When performing backups and restores, ensure that data from the `users` app and the `auth` app is included to maintain user accounts and permissions.
 
----
 
 [Previous: User and Group Management](/doc/admin/User_and_Group_Management.md) | [Next: Security](/doc/admin/Security.md)
