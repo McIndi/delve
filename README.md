@@ -5,14 +5,14 @@ Delve is a powerful, extensible platform for ingesting, transforming, and search
 ## Features
 - Ingest data from diverse sources (REST API, file tail, syslog, scheduled queries)
 - Transform and normalize data with custom pipelines
-- Powerful search and filtering with a pipeline syntax
-- Interactive dashboards and visualizations
-- Alerts and notifications
-- Extensible with custom apps and commands
+- Perform powerful search and filtering with a pipeline syntax
+- Create interactive dashboards and visualizations
+- Set up alerts and notifications
+- Extend functionality with custom apps and commands
 
 ## Project Structure
 - `manage.py` at the repository root for standard Django management
-- All core apps (e.g., `events`, `users`) and configuration in top-level folders
+- Core apps (e.g., `events`, `users`) and configuration in top-level folders
 - `requirements.txt` and `pyproject.toml` for Python dependencies
 - `bootstrap.py` for automated build, packaging, and asset management
 - `frontend/` for JavaScript and SCSS assets
@@ -71,9 +71,11 @@ Visit http://127.0.0.1:8000/ in your browser to access the web UI.
 
 ## Advanced: Automated Build & Packaging For Air-Gapped Systems
 
-You can use `bootstrap.py` to automate build, packaging, and asset management for deployment to air-gapped systems. Containerization is another possible solution for deployment to air gapped systems, but this utility makes possible deployment to air gapped systems with no dependency on the target system.
+### Automated Build & Packaging for Air-Gapped Systems
 
-After running the following commands, you will have a zip file under `./dist/` that contains everything needed to deploy delve to an air-gapped system including source code, python interpreter, frontend and backend dependencies, etc.:
+You can use `bootstrap.py` to automate building, packaging, and asset management for deployment to air-gapped systems. While containerization is also supported, this utility enables deployment to air-gapped environments without requiring dependencies on the target system.
+
+After running the following commands, you will have a zip file under `./dist/` containing everything needed to deploy Delve to an air-gapped system, including source code, Python interpreter, frontend and backend dependencies, and more:
 
 - Clean build artefacts:
   ```bash
