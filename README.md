@@ -33,12 +33,12 @@ python -m venv .venv
 source .venv/bin/activate  # On Linux/macOS
 ```
 
+
 ### 3. Install dependencies
 ```bash
 pip install -r requirements.txt
-# or, for editable/dev install:
-pip install -e .
 ```
+
 
 ### 4. Run database migrations
 ```bash
@@ -56,7 +56,6 @@ npx webpack --config webpack.config.js
 python manage.py collectstatic --no-input
 ```
 
-
 ### 7. Create a superuser
 ```bash
 python manage.py createsuperuser
@@ -66,6 +65,15 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+## Dependency Management
+
+All Python runtime dependencies are managed via a single, pinned `requirements.txt` at the repository root. Do not add runtime dependencies to `pyproject.toml` or use `pip install .` or `pip install -e .`. For local development, Docker, and ZIP/air-gapped workflows, always install with:
+
+```bash
+pip install -r requirements.txt
+```
+
+If you need to update dependencies, edit `requirements.txt` directly.
 
 Visit http://127.0.0.1:8000/ in your browser to access the web UI.
 

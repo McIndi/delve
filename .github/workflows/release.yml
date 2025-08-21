@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r build-requirements.txt
+          pip install -r requirements.txt
       - name: Run build script
         run: python build.py
       - name: Prepare settings and urls
@@ -56,12 +56,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Install MariaDB Connector/C
-        run: sudo apt-get update && sudo apt-get install -y libmariadb-dev
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r build-requirements.txt
+          pip install -r requirements.txt
       - name: Run build script
         run: python build.py
       - name: Prepare settings and urls
