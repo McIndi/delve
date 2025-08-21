@@ -39,4 +39,4 @@ DELVE_SSL_MODULE = 'builtin'
 
 ---
 
-[Previous: Monitoring and Maintenance](Monitoring_and_Maintenance.md) | [Next: Troubleshooting](Troubleshooting.md)
+[Previous: Monitoring and Maintenance](/doc/admin/Monitoring_and_Maintenance.md) | [Next: Troubleshooting](/doc/admin/Troubleshooting.md)

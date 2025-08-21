@@ -61,7 +61,7 @@ Follow these steps to install Delve:
 
 **NOTE**: Utilities launched with `dlv` are generally configured in settings.py, while utilities in `utilities/cli/` are generally configured via command line arguments.
 
-For details on automating these steps into a repeatable build, see the [Bootstrap Guide](Bootstrap_Guide.md).
+For details on automating these steps into a repeatable build, see the [Bootstrap Guide](/doc/admin/Bootstrap_Guide.md).
 
 ## Hosting with CherryPy
 
@@ -115,4 +115,4 @@ This feature is coming soon. Until then, please consult your operating system's 
 
 ---
 
-[Previous: Introduction](Introduction.md) | [Next: Configuration](Configuration.md)
+[Previous: Introduction](/doc/admin/Introduction.md) | [Next: Configuration](/doc/admin/Configuration.md)

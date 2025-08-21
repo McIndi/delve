@@ -59,4 +59,4 @@ By following the guidelines outlined in this manual and general best practices, 
 
 ---
 
-[Previous: Table of Contents](index.md) | [Next: Installation and Setup](Installation_and_Setup.md)
+[Previous: Table of Contents](/doc/admin/index.md) | [Next: Installation and Setup](/doc/admin/Installation_and_Setup.md)

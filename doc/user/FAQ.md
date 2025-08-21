@@ -14,25 +14,25 @@ Delve is built on top of several robust technologies:
 
 ## Installation Questions
 ### How do I install Delve?
-For installation instructions, please refer to the [Delve Administration Manual](../administration/index.md).
+For installation instructions, please refer to the [Delve Administration Manual](/doc/admin/index.md).
 
 ### What are the system requirements for Delve?
-Please refer to the [System Requirements](../administration/Installation_and_Setup.md#system-requirements) section in the Delve Administration Manual.
+Please refer to the [System Requirements](/doc/admin/Installation_and_Setup.md#system-requirements) section in the Delve Administration Manual.
 
 ## Usage Questions
 ### How do I log in to Delve?
 Once Delve is installed, you can log in to the web interface using the credentials provided by your administrator.
 
 ### How do I search for data in Delve?
-You can use the Explore UI to perform interactive searches. For more details, refer to the [Using the Web UI](Using_the_Web_UI.md) section.
+You can use the Explore UI to perform interactive searches. For more details, refer to the [Using the Web UI](/doc/user/Using_the_Web_UI.md) section.
 
 ## Troubleshooting Questions
 ### What should I do if I encounter an error?
-Refer to the [Troubleshooting](../administration/Troubleshooting.md) section in the Delve Administration Manual for common issues and solutions.
+Refer to the [Troubleshooting](/doc/admin/Troubleshooting.md) section in the Delve Administration Manual for common issues and solutions.
 
 ### How do I check the logs?
-You can check the logs by navigating to the appropriate log files on your server. For more details, refer to the [Checking Logs](../administration/Troubleshooting.md#checking-logs) section.
+You can check the logs by navigating to the appropriate log files on your server. For more details, refer to the [Checking Logs](/doc/admin/Troubleshooting.md#checking-logs) section.
 
 ---
 
-[Previous: User Guide](User_Guide.md) | [Next: Usage Tips](Usage_Tips.md)
+[Previous: User Guide](/doc/user/User_Guide.md) | [Next: Usage Tips](/doc/user/Usage_Tips.md)

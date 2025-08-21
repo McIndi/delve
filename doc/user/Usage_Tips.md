@@ -30,4 +30,4 @@
 
 ---
 
-[Previous: FAQ](FAQ.md) | [Next: User Guide](User_Guide.md)
+[Previous: FAQ](/doc/user/FAQ.md) | [Next: User Guide](/doc/user/User_Guide.md)

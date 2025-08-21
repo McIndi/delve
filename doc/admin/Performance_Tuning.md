@@ -125,4 +125,4 @@ By following these performance tuning techniques, you can optimize your Delve in
 
 ---
 
-[Previous: Troubleshooting](Troubleshooting.md) | [Next: Backup and Restore](Backup_and_Restore.md)
+[Previous: Troubleshooting](/doc/admin/Troubleshooting.md) | [Next: Backup and Restore](/doc/admin/Backup_and_Restore.md)

@@ -87,4 +87,4 @@ Delve includes a custom user model in the `users` app. However, the default Djan
 
 ---
 
-[Previous: User and Group Management](User_and_Group_Management.md) | [Next: Security](Security.md)
+[Previous: User and Group Management](/doc/admin/User_and_Group_Management.md) | [Next: Security](/doc/admin/Security.md)

@@ -228,7 +228,7 @@ Delve provides several built-in search commands to retrieve, parse, and transfor
 
 Custom search commands can also be defined to retrieve, parse, and/or transform data.
 
-Check the [Search Command Reference](Search_Command_Reference.md) for a list of all search commands included with Delve.
+Check the [Search Command Reference](/doc/admin/Search_Command_Reference.md) for a list of all search commands included with Delve.
 
 Custom or third-party Delve apps can also define search commands, but all search commands must be configured in `settings.py` under `DELVE_SEARCH_COMMANDS` in order to be used.
 
@@ -278,4 +278,4 @@ make_events --save
 
 ---
 
-[Previous: Configuration](Using_the_Web_UI.md) | [Next: User and Group Management](User_and_Group_Management.md)
+[Previous: Configuration](/doc/admin/Using_the_Web_UI.md) | [Next: User and Group Management](/doc/admin/User_and_Group_Management.md)

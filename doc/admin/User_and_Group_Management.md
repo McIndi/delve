@@ -52,4 +52,4 @@ By following these steps, you can effectively manage users, groups, and permissi
 
 ---
 
-[Previous: Ingesting Data](Ingesting_Data.md.md) | [Next: Monitoring and Maintenance](Monitoring_and_Maintenance.md)
+[Previous: Ingesting Data](/doc/admin/Ingesting_Data.md) | [Next: Monitoring and Maintenance](/doc/admin/Monitoring_and_Maintenance.md)

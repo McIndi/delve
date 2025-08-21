@@ -55,4 +55,4 @@ To access the Admin UI, navigate to `/admin/` in your browser. You will need to 
 
 ---
 
-[Previous: Getting Started](Getting_Started.md) | [Next: Ingesting Data](Ingesting_Data.md)
+[Previous: Getting Started](/doc/user/Getting_Started.md) | [Next: Ingesting Data](/doc/user/Ingesting_Data.md)

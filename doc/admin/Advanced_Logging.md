@@ -6,14 +6,14 @@ This section provides detailed information on configuring Python's logging syste
 ## Table of Contents
 1. [Configuring Python Logging](#configuring-python-logging)
 2. [Log Formatters](#log-formatters)
-   - [Including Process and Thread IDs](#including-process-and-thread-ids)
-   - [Including Filename and Line Number](#including-filename-and-line-number)
+    - [Including Process and Thread IDs](#including-process-and-thread-ids)
+    - [Including Filename and Line Number](#including-filename-and-line-number)
 3. [Significant Loggers](#significant-loggers)
-   - [Django SQL Logger](#django-sql-logger)
-   - [Django Request Logger](#django-request-logger)
+    - [Django SQL Logger](#django-sql-logger)
+    - [Django Request Logger](#django-request-logger)
 4. [Advanced Handlers](#advanced-handlers)
-   - [SMTPHandler](#smtphandler)
-   - [TimedRotatingFileHandler](#timedrotatingfilehandler)
+    - [SMTPHandler](#smtphandler)
+    - [TimedRotatingFileHandler](#timedrotatingfilehandler)
 5. [Example Configuration](#example-configuration)
 
 ## Configuring Python Logging

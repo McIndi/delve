@@ -88,4 +88,4 @@ Please see the provided `example-settings.py` which can be found in the Delve in
 
 ---
 
-[Previous: Installation and Setup](Installation_and_Setup.md) | [Next: Ingesting Data](Ingesting_Data.md)
+[Previous: Installation and Setup](/doc/admin/Installation_and_Setup.md) | [Next: Ingesting Data](/doc/admin/Ingesting_Data.md)

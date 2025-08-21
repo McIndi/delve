@@ -44,7 +44,7 @@ Regularly check the application logs for errors, warnings, and other important m
 
 Logs for the web server and qcluster can be found in the `log` directory, while logs from the utility commands (ie. `syslog-receiver`) will be found in `./utilities/log/`.
 
-You can also configure logging settings in `settings.py` to customize log levels, formats, and handlers. See [Advanced Logging](Advanced_Logging.md) for more details.
+You can also configure logging settings in `settings.py` to customize log levels, formats, and handlers. See [Advanced Logging](/doc/admin/Advanced_Logging.md) for more details.
 
 ## Accessing Support Resources
 If you encounter issues that you cannot resolve, consider accessing support resources such as:
@@ -59,4 +59,4 @@ By following these troubleshooting techniques and utilizing available resources,
 
 ---
 
-[Previous: Security](Security.md) | [Next: Performance Tuning](Performance_Tuning.md)
+[Previous: Security](/doc/admin/Security.md) | [Next: Performance Tuning](/doc/admin/Performance_Tuning.md)

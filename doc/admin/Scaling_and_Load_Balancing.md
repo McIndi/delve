@@ -172,4 +172,4 @@ By following these scaling and load balancing strategies, you can ensure that yo
 
 ---
 
-[Previous: Backup and Restore](Backup_and_Restore.md) | [Next: Advanced Logging](Advanced_Logging.md)
+[Previous: Backup and Restore](/doc/admin/Backup_and_Restore.md) | [Next: Advanced Logging](/doc/admin/Advanced_Logging.md)

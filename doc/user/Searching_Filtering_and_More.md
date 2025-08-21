@@ -505,4 +505,4 @@ The `qs_*` commands use Django's ORM methods to perform the specified operations
 
 ---
 
-[Previous: Ingesting Data](Ingesting_Data.md) | [Next: Alerts and Notifications](Alerts_and_Notifications.md)
+[Previous: Ingesting Data](/doc/user/Ingesting_Data.md) | [Next: Alerts and Notifications](/doc/user/Alerts_and_Notifications.md)

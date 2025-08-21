@@ -82,4 +82,4 @@ By following these steps, you can effectively back up and restore your Delve ins
 
 ---
 
-[Previous: Performance Tuning](Performance_Tuning.md) | [Next: Scaling and Load Balancing](Scaling_and_Load_Balancing.md)
+[Previous: Performance Tuning](/doc/admin/Performance_Tuning.md) | [Next: Scaling and Load Balancing](/doc/admin/Scaling_and_Load_Balancing.md)
