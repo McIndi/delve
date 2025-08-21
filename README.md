@@ -71,7 +71,7 @@ Visit http://127.0.0.1:8000/ in your browser to access the web UI.
 
 ## Advanced: Automated Build & Packaging For Air-Gapped Systems
 
-You can use `bootstrap.py` to automate build, packaging, and asset management for deployment to air-gapped systems. Containerization is another possible solution for deployment to air gappd systems, but this utility makes possible deployment to air gapped systems with no dependency on the target system.
+You can use `bootstrap.py` to automate build, packaging, and asset management for deployment to air-gapped systems. Containerization is another possible solution for deployment to air gapped systems, but this utility makes possible deployment to air gapped systems with no dependency on the target system.
 
 After running the following commands, you will have a zip file under `./dist/` that contains everything needed to deploy delve to an air-gapped system including source code, python interpreter, frontend and backend dependencies, etc.:
 
@@ -104,7 +104,7 @@ After running the following commands, you will have a zip file under `./dist/` t
 
 Or run all steps in sequence:
 ```bash
-python bootstrap.py all --clean-all --download-target-dir build/downloads
+python bootstrap.py all
 ```
 
 See `doc/admin/Bootstrap_Guide.md` for full details and extensibility options.
