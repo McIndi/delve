@@ -65,6 +65,8 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
+
+> **Defaults:** Delve ships with Whitenoise + CherryPy by default to keep air-gapped/offline use simple. Swap components as desired.
 ## Dependency Management
 
 All Python runtime dependencies are managed via a single, pinned `requirements.txt` at the repository root. Do not add runtime dependencies to `pyproject.toml` or use `pip install .` or `pip install -e .`. For local development, Docker, and ZIP/air-gapped workflows, always install with:
