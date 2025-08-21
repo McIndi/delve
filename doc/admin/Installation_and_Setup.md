@@ -23,22 +23,22 @@ Follow these steps to install Delve:
    cp ./delve/example-urls.py ./delve/urls.py
    ```
 
-**Important**: It is very important to change your `SECRET_KEY` setting. The default setting will invalidate all sessions and more on every restart of the server. `SECRET_KEY` should be set to a randomly generated string that is kept secret and safe. The `./fl gen-secret-key` will print such a string that can be copied and pasted into your `settings.py`.
+**Important**: It is very important to change your `SECRET_KEY` setting. The default setting will invalidate all sessions and more on every restart of the server. `SECRET_KEY` should be set to a randomly generated string that is kept secret and safe. The `python manage.py gen-secret-key` command will print such a string that can be copied and pasted into your `settings.py`.
 
 **Note**: The `SECRET_KEY_FALLBACKS` can be set to a list of fallback secret keys for a particular Django installation. These are used to allow rotation of the `SECRET_KEY`.
 
 4. **Run Migrations**: Create the database and run migrations.
 
    ```
-   ./fl migrate
+   python manage.py migrate
    ```
 
-**Note**: The `./fl showmigrations` can be used to check the status of all migrations.
+**Note**: The `python manage.py showmigrations` command can be used to check the status of all migrations.
 
 5. **Create Admin User**: Create an admin user for accessing the admin interface.
 
    ```
-   ./fl createsuperuser
+   python manage.py createsuperuser
    ```
 
 **Note**: The createsuperuser can accept all parameters as Command Line arguments which can be used to facilitate automation.
@@ -47,19 +47,19 @@ Follow these steps to install Delve:
 
    ```
    # Start the web server (Explore UI, Admin UI and REST API)
-   ./fl serve
+   ./dlv serve
 
    # Start the task scheduler
-   ./fl qcluster
-   
+   ./dlv qcluster
+
    # Start the syslog server
-   ./python/$PYTHON_VERSION/bin/python ./utilities/cli/syslog-receiver.py
-   
+   python utilities/cli/syslog-receiver.py
+
    # Start monitoring all files that match /var/log/*.log
-   ./python/$PYTHON_VERSION/bin/python ./utilities/cli/tail-files.py /var/log/*.log
+   python utilities/cli/tail-files.py /var/log/*.log
    ```
 
-**NOTE**: Utilities launched with `fl` are generally configured in settings.py, while utilities in `./utilities/cli/` are generally configured via command line arguments.
+**NOTE**: Utilities launched with `dlv` are generally configured in settings.py, while utilities in `utilities/cli/` are generally configured via command line arguments.
 
 For details on automating these steps into a repeatable build, see the [Bootstrap Guide](Bootstrap_Guide.md).
 
@@ -68,7 +68,7 @@ For details on automating these steps into a repeatable build, see the [Bootstra
 Delve uses CherryPy to host the Django web app. The `serve` management command starts the CherryPy server to serve the Delve web UI.
 
 ```bash
-./fl serve
+./dlv serve
 ```
 
 The following settings in `settings.py` control the behavior of the CherryPy web server:
@@ -95,19 +95,19 @@ After installation, perform the initial configuration to tailor Delve to your ne
 
 Delve Supervisor is a very simple service (currently only available on Windows) that is configured via the `DELVE_SERVICE_COMMANDS` value in `settings.py`. 
 
-`DELVE_SERVICE_COMMANDS` should be a list of commands to run when the Delve Supervisor service is started. These commands are supposed to run forever (like `./fl serve` and `./fl qcluster`). Each command will be run and if any of the processes die, that process will be restarted.
+`DELVE_SERVICE_COMMANDS` should be a list of commands to run when the Delve Supervisor service is started. These commands are supposed to run forever (like `./dlv serve` and `./dlv qcluster`). Each command will be run and if any of the processes die, that process will be restarted.
 
 ### Installing Delve Supervisor Service on Windows
 If you are on Windows, you can use the following command from the Delve directory to install the Delve supervisor service. Run the command from an Administrator Command Prompt:
 
 ```bash
-./python/$PYTHON_VERSION/python ./service.py install
+python service.py install
 ```
 
 After the service is installed, use the Windows Services app to configure and start the service. Alternatively, you can use the `service.py` command to see the available options:
 
 ```bash
-./python/$PYTHON_VERSION/python ./service.py /?
+python service.py /?
 ```
 
 ### Installing Delve Supervisor Service on Other Platforms
