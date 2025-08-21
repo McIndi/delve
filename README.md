@@ -1,4 +1,3 @@
-npx webpack --config webpack.config.js
 # Delve
 
 Delve is a powerful, extensible platform for ingesting, transforming, and searching structured, unstructured, and semi-structured data. It is designed for easy local development, robust production deployments, and seamless integration with modern tools and containerization workflows.
