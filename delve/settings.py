@@ -151,45 +151,52 @@ WSGI_APPLICATION = 'delve.wsgi.application'
 
 # Database configuration
 
-# Example configuration for PostgreSQL:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DELVE_DATABASE_NAME', 'delve'),
-#         'USER': os.getenv('DELVE_DATABASE_USER', None),
-#         'PASSWORD': os.getenv('DELVE_DATABASE_PASSWORD', None),
-#         'HOST': os.getenv('DELVE_DATABASE_HOST', 'localhost'),  # Default: localhost
-#         'PORT': os.getenv('DELVE_DATABASE_PORT', '5432'),  # Default PostgreSQL port
-#     }
-# }
 
-# Example configuration for MySQL:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': os.getenv('DELVE_DATABASE_NAME', 'delve'),
-#         'USER': os.getenv('DELVE_DATABASE_USER', None),
-#         'PASSWORD': os.getenv('DELVE_DATABASE_PASSWORD', None),
-#         'HOST': os.getenv('DELVE_DATABASE_HOST', 'localhost'),  # Default: localhost
-#         'PORT': os.getenv('DELVE_DATABASE_PORT', '3306'),  # Default MySQL port
-#         'OPTIONS': {
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#         },
-#     }
-# }
+# Unified database configuration via environment variables
+DB_ENGINE = os.getenv('DELVE_DATABASE_ENGINE', 'sqlite3').lower()
+DB_NAME = os.getenv('DELVE_DATABASE_NAME', str(BASE_DIR / 'db.sqlite3' if DB_ENGINE == 'sqlite3' else 'delve'))
+DB_USER = os.getenv('DELVE_DATABASE_USER', None)
+DB_PASSWORD = os.getenv('DELVE_DATABASE_PASSWORD', None)
+DB_HOST = os.getenv('DELVE_DATABASE_HOST', None)
+DB_PORT = os.getenv('DELVE_DATABASE_PORT', None)
 
-# Example configuration for SQLite:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', 
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            "timeout": 120, 
-            "init_command": "PRAGMA journal_mode=WAL;", 
-            "transaction_mode": "IMMEDIATE", 
-        },
+if DB_ENGINE == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_NAME,
+            'USER': DB_USER,
+            'PASSWORD': DB_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+        }
     }
-}
+elif DB_ENGINE == 'mysql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': DB_NAME,
+            'USER': DB_USER,
+            'PASSWORD': DB_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            },
+        }
+    }
+else:  # Default to sqlite3
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': DB_NAME,
+            'OPTIONS': {
+                "timeout": 120,
+                "init_command": "PRAGMA journal_mode=WAL;",
+                "transaction_mode": "IMMEDIATE",
+            },
+        }
+    }
 
 
 # Password validation
