@@ -78,22 +78,89 @@ pip install -r requirements.txt
 If you need to update dependencies, edit `requirements.txt` directly.
 
 
-## Using Delve with Docker
+## Database Creation in Docker Compose
 
-After building and running the Docker image, you need to initialize the database and create a superuser inside the running container:
+When you set `DELVE_DATABASE_NAME`, `DELVE_DATABASE_USER`, and `DELVE_DATABASE_PASSWORD` in your `.env`, the Postgres container automatically creates the database and user with those credentials on first startup. No manual setup is required.
 
+## Using Delve with Docker Compose
+
+Delve ships with a `docker-compose.yaml` for easy setup. Make sure to copy `.env.example` to `.env` and fill in required values (see comments in the file).
+
+### Build and Start All Services
 ```bash
-docker exec <container_id_or_name> python3 /app/manage.py migrate
-docker exec -it <container_id_or_name> python3 /app/manage.py createsuperuser
+docker-compose up --build
+```
+This will build the images and start the web server, worker, and Postgres database.
+
+### Run Database Migrations (required after first start)
+```bash
+docker-compose exec web python manage.py migrate
 ```
 
-Replace `<container_id_or_name>` with your actual container ID or name.
+### Create a Superuser (for admin access)
+```bash
+docker-compose exec web python manage.py createsuperuser
+```
+
+### View Logs for All Services
+```bash
+docker-compose logs -f
+```
+
+### Restart All Services
+```bash
+docker-compose restart
+```
+
+### Stop and Remove All Containers
+```bash
+docker-compose down
+```
 
 Visit http://127.0.0.1:8000/ in your browser to access the web UI.
 
-## Advanced: Automated Build & Packaging For Air-Gapped Systems
+### Docker Troubleshooting & Cleanup
+- If a service fails to start, check logs with `docker-compose logs <service>`
+- If environment variables are missing, Compose will error out with a message (for required secrets and DB credentials)
+- To rebuild images after changing the Dockerfile, use `docker-compose build`
 
-### Automated Build & Packaging for Air-Gapped Systems
+#### Inspect Docker State
+- List all containers (running and stopped):
+  ```bash
+  docker ps -a
+  ```
+- List all images:
+  ```bash
+  docker images
+  ```
+- List all volumes:
+  ```bash
+  docker volume ls
+  ```
+- Show disk usage (images, containers, volumes, build cache):
+  ```bash
+  docker system df
+  ```
+
+#### Clean Docker Environment (remove all containers, images, volumes, caches)
+- Remove stopped containers:
+  ```bash
+  docker container prune -f
+  ```
+- Remove unused images:
+  ```bash
+  docker image prune -a -f
+  ```
+- Remove unused volumes:
+  ```bash
+  docker volume prune -f
+  ```
+- Remove everything (containers, images, volumes, networks, build cache):
+  ```bash
+  docker system prune -a -f
+  ```
+
+## Advanced: Automated Build & Packaging For Air-Gapped Systems
 
 You can use `bootstrap.py` to automate building, packaging, and asset management for deployment to air-gapped systems. While containerization is also supported, this utility enables deployment to air-gapped environments without requiring dependencies on the target system.
 
