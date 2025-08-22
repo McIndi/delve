@@ -89,7 +89,7 @@ python utilities/cli/tail-files.py --sourcetype "my_sourcetype" "/path/to/logfil
 python utilities/cli/tail-files.py --no-verify --server "https://delve.example.com" "/path/to/logfile.log"
 
 # Provide username and password for authentication to prevent being prompted
-python utilities/cli/tail-files.py--username "myuser" --password "mypassword" "/path/to/logfile.log"
+python utilities/cli/tail-files.py --username "myuser" --password "mypassword" "/path/to/logfile.log"
 
 # Slightly decrease verbosity of log output
 python utilities/cli/tail-files.py -v "/path/to/logfile.log"
@@ -98,7 +98,7 @@ python utilities/cli/tail-files.py -v "/path/to/logfile.log"
 python utilities/cli/tail-files.py -vvvvvv "/path/to/logfile.log"
 
 # Monitor multiple log files using glob patterns
-python utilities/cli/tail-files.py"/var/log/*.log"
+python utilities/cli/tail-files.py "/var/log/*.log"
 ```
 
 ### Additional Information

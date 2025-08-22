@@ -84,7 +84,7 @@ Delve has several specific configuration options that you can set in `settings.p
 
 ## Example Configuration
 
-Please see the provided `example-settings.py` which can be found in the Delve installation directory at `./delve/example-settings.py` for an example.
+Use the existing `delve/settings.py` file in the project root as a reference for available options and environment variable support.
 
 
 [Previous: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md) | [Next: Ingesting Data](/doc/admin/Ingesting_Data.md)

@@ -9,21 +9,21 @@ Use the `dumpdata` command to export data from the database to a JSON file. This
 To back up the entire database, run the following command:
 
 ```bash
-fl dumpdata > backup.json
+python manage.py dumpdata > backup.json
 ```
 
 ### Backing Up Specific Apps
 To back up specific apps (e.g., `users`, `auth`), run the following command:
 
 ```bash
-fl dumpdata users auth > backup_users_auth.json
+python manage.py dumpdata users auth > backup_users_auth.json
 ```
 
 ### Scheduling Backups
 You can schedule regular backups using a task scheduler like `cron` on Linux or Task Scheduler on Windows. Here is an example of a `cron` job that runs a backup every day at midnight:
 
 ```cron
-0 0 * * * /path/to/delve/venv/bin/fl dumpdata > /path/to/backups/backup_$(date +\%F).json
+0 0 * * * cd /path/to/delve && /path/to/delve/venv/bin/python manage.py dumpdata > /path/to/backups/backup_$(date +\%F).json
 ```
 
 ## Restoring Data
@@ -33,7 +33,7 @@ Use the `loaddata` command to import data from a JSON file into the database. Th
 To restore data from a backup file, run the following command:
 
 ```bash
-fl loaddata backup.json
+python manage.py loaddata backup.json
 ```
 
 The `loaddata` command will load the data into the proper app automatically.
@@ -58,7 +58,8 @@ Here is an example backup script for Linux:
 DELVE_DIR="/path/to/delve"
 
 # Run the backup command
-$DELVE_DIR/fl dumpdata > "$DELVE_DIR/backups/backup_$(date +\%F).json"
+cd "$DELVE_DIR"
+python manage.py dumpdata > "$DELVE_DIR/backups/backup_$(date +\%F).json"
 ```
 
 ### Automating Restores
@@ -75,7 +76,8 @@ Here is an example restore script for Linux:
 DELVE_DIR="/path/to/delve"
 
 # Run the restore command
-$DELVE_DIR/fl loaddata "$DELVE_DIR/backups/backup.json"
+cd "$DELVE_DIR"
+python manage.py loaddata "$DELVE_DIR/backups/backup.json"
 ```
 
 By following these steps, you can effectively back up and restore your Delve instance, ensuring that your data is protected and can be quickly recovered in case of an issue.
