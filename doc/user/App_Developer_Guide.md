@@ -291,7 +291,7 @@ search --last-15-minutes text__icontains=fail index=logs
 ```
 
 2. Schedule the saved query using Django Q:
-   1. Ensure the Q cluster is running (`./dlv qcluster` or via Windows Service)
+   1. Ensure the Q cluster is running (`python manage.py qcluster` or via Windows Service)
    2. Access the Django admin interface at `/admin/`
    3. Navigate to `Django Q > Scheduled tasks`
    4. Click "Add Scheduled task"

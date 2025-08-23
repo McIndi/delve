@@ -16,12 +16,7 @@ Follow these steps to install Delve:
 
 1. **Download Delve**: Download the latest release from the [releases page](https://github.com/notesofcliff/delve/releases).
 2. **Extract Files**: Unzip the downloaded file to your desired location.
-3. **Configure Settings**: Copy the example settings and URL files.
-
-   ```
-   cp ./delve/example-settings.py ./delve/settings.py
-   cp ./delve/example-urls.py ./delve/urls.py
-   ```
+3. **Configure Settings**: Adjust `delve/settings.py` and `delve/urls.py` for your environment. These files are provided in the repository and can be customized directly.
 
 **Important**: It is very important to change your `SECRET_KEY` setting. The default setting will invalidate all sessions and more on every restart of the server. `SECRET_KEY` should be set to a randomly generated string that is kept secret and safe. The `python manage.py gen-secret-key` command will print such a string that can be copied and pasted into your `settings.py`.
 
@@ -47,10 +42,10 @@ Follow these steps to install Delve:
 
    ```
    # Start the web server (Explore UI, Admin UI and REST API)
-   ./dlv serve
+   python manage.py serve
 
    # Start the task scheduler
-   ./dlv qcluster
+   python manage.py qcluster
 
    # Start the syslog server
    python utilities/cli/syslog-receiver.py
@@ -59,7 +54,7 @@ Follow these steps to install Delve:
    python utilities/cli/tail-files.py /var/log/*.log
    ```
 
-**NOTE**: Utilities launched with `dlv` are generally configured in settings.py, while utilities in `utilities/cli/` are generally configured via command line arguments.
+**NOTE**: Utilities launched with `python manage.py` are configured in `settings.py`, while utilities in `utilities/cli/` are generally configured via command line arguments.
 
 For details on automating these steps into a repeatable build, see the [Bootstrap Guide](/doc/admin/Bootstrap_Guide.md).
 
@@ -68,7 +63,7 @@ For details on automating these steps into a repeatable build, see the [Bootstra
 Delve uses CherryPy to host the Django web app. The `serve` management command starts the CherryPy server to serve the Delve web UI.
 
 ```bash
-./dlv serve
+python manage.py serve
 ```
 
 The following settings in `settings.py` control the behavior of the CherryPy web server:
@@ -86,7 +81,7 @@ The following settings in `settings.py` control the behavior of the CherryPy web
 - **DELVE_ACCEPTED_QUEUE_TIMEOUT**: How long to wait for an HTTP request to be accepted before timing out.
 - **DELVE_SERVER_MAX_THREADS**: The max number of threads to spawn to handle web requests.
 
-**NOTE**: The provided example-settings.py will check environment variables of the same name for all of these server-specific configurations as well as other settings. 
+**NOTE**: The provided `settings.py` will check environment variables of the same name for all of these server-specific configurations as well as other settings.
 
 ## Initial Configuration
 After installation, perform the initial configuration to tailor Delve to your needs. Configuration settings are found in the `settings.py` file.
@@ -95,7 +90,7 @@ After installation, perform the initial configuration to tailor Delve to your ne
 
 Delve Supervisor is a very simple service (currently only available on Windows) that is configured via the `DELVE_SERVICE_COMMANDS` value in `settings.py`. 
 
-`DELVE_SERVICE_COMMANDS` should be a list of commands to run when the Delve Supervisor service is started. These commands are supposed to run forever (like `./dlv serve` and `./dlv qcluster`). Each command will be run and if any of the processes die, that process will be restarted.
+`DELVE_SERVICE_COMMANDS` should be a list of commands to run when the Delve Supervisor service is started. These commands are supposed to run forever (like `python manage.py serve` and `python manage.py qcluster`). Each command will be run and if any of the processes die, that process will be restarted.
 
 ### Installing Delve Supervisor Service on Windows
 If you are on Windows, you can use the following command from the Delve directory to install the Delve supervisor service. Run the command from an Administrator Command Prompt:

@@ -17,6 +17,7 @@ Delve is a powerful, extensible platform for ingesting, transforming, and search
 - `bootstrap.py` for automated build, packaging, and asset management
 - `frontend/` for JavaScript and SCSS assets
 - `doc/` for user and admin documentation
+- `utilities/cli/` for ingestion utilities such as `tail-files.py` and `syslog-receiver.py`
 
 ## Quick Start
 
@@ -64,6 +65,18 @@ python manage.py createsuperuser
 ### 8. Start the development server
 ```bash
 python manage.py runserver
+```
+
+### 9. (Optional) Start additional services
+```bash
+# Task scheduler
+python manage.py qcluster
+
+# Syslog server
+python utilities/cli/syslog-receiver.py
+
+# Tail log files
+python utilities/cli/tail-files.py /var/log/*.log
 ```
 
 > **Defaults:** Delve ships with Whitenoise + CherryPy by default to keep air-gapped/offline use simple. Swap components as desired.

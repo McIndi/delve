@@ -75,28 +75,28 @@ Here are some example commands to use the file-tail utility:
 
 ```bash
 # Basic usage with default settings
-python tail-files.py "/path/to/logfile.log"
+python utilities/cli/tail-files.py "/path/to/logfile.log"
 
 # Specify a custom index
-python tail-files.py --index "my_index" "/path/to/logfile.log"
+python utilities/cli/tail-files.py --index "my_index" "/path/to/logfile.log"
 
 # Specify a custom sourcetype
-python tail-files.py --sourcetype "my_sourcetype" "/path/to/logfile.log"
+python utilities/cli/tail-files.py --sourcetype "my_sourcetype" "/path/to/logfile.log"
 
 # Disable TLS hostname verification for the Delve server
-python tail-files.py --no-verify --server "https://delve.example.com" "/path/to/logfile.log"
+python utilities/cli/tail-files.py --no-verify --server "https://delve.example.com" "/path/to/logfile.log"
 
 # Provide username and password for authentication to prevent being prompted
-python tail-files.py --username "myuser" --password "mypassword" "/path/to/logfile.log"
+python utilities/cli/tail-files.py --username "myuser" --password "mypassword" "/path/to/logfile.log"
 
 # Slightly decrease verbosity of log output
-python tail-files.py -v "/path/to/logfile.log"
+python utilities/cli/tail-files.py -v "/path/to/logfile.log"
 
 # Most verbose log output
-python tail-files.py -vvvvvv "/path/to/logfile.log"
+python utilities/cli/tail-files.py -vvvvvv "/path/to/logfile.log"
 
 # Monitor multiple log files using glob patterns
-python tail-files.py "/var/log/*.log"
+python utilities/cli/tail-files.py "/var/log/*.log"
 ```
 
 ### Additional Information
@@ -145,37 +145,37 @@ Here are some example commands to use the syslog-receiver utility:
 
 ```bash
 # Basic usage with default settings for UDP
-python syslog-receiver.py --udp
+python utilities/cli/syslog-receiver.py --udp
 
 # Basic usage with default settings for TCP
-python syslog-receiver.py --tcp
+python utilities/cli/syslog-receiver.py --tcp
 
 # Basic usage with default settings for TCP and UDP
-python syslog-receiver.py --tcp --udp
+python utilities/cli/syslog-receiver.py --tcp --udp
 
 # Listen on a custom port for TCP
-python syslog-receiver.py --tcp --tcp-port 9514
+python utilities/cli/syslog-receiver.py --tcp --tcp-port 9514
 
 # Specify a custom index and sourcetype for UDP
-python syslog-receiver.py --udp --index "my_index" --sourcetype "my_sourcetype"
+python utilities/cli/syslog-receiver.py --udp --index "my_index" --sourcetype "my_sourcetype"
 
 # Specify a custom index and sourcetype for TCP
-python syslog-receiver.py --tcp --index "my_index" --sourcetype "my_sourcetype"
+python utilities/cli/syslog-receiver.py --tcp --index "my_index" --sourcetype "my_sourcetype"
 
 # Use TLS for TCP with specified certificate and key
-python syslog-receiver.py --tcp --tcp-cert "/path/to/cert.pem" --tcp-key "/path/to/key.pem"
+python utilities/cli/syslog-receiver.py --tcp --tcp-cert "/path/to/cert.pem" --tcp-key "/path/to/key.pem"
 
 # Disable TLS hostname verification for the Delve server
-python syslog-receiver.py --no-verify --server "https://delve.example.com" --tcp
+python utilities/cli/syslog-receiver.py --no-verify --server "https://delve.example.com" --tcp
 
 # Provide username and password for authentication to prevent being prompted
-python syslog-receiver.py --username "myuser" --password "mypassword" --udp
+python utilities/cli/syslog-receiver.py --username "myuser" --password "mypassword" --udp
 
 # Lowest verbosity of log output (less than default)
-python syslog-receiver.py -v --udp
+python utilities/cli/syslog-receiver.py -v --udp
 
 # Most verbose log output (more than default)
-python syslog-receiver.py -vvvvvv --udp
+python utilities/cli/syslog-receiver.py -vvvvvv --udp
 ```
 
 ### Additional Information
