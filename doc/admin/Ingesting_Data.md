@@ -25,7 +25,11 @@ This endpoint is provided to allow the resolution of queries.
 
 The `/api/query` endpoint is what is used to power the Explore UI which is available at `/explore`.
 
-The browsable REST API, which is returned when accessing `/api/query` from a browser can be really useful for debugging if you enable `DEBUG` in your `settings.py` as it allows you to track the SQL statements issued by search commands as well as a ton of other useful information.
+The browsable REST API, which is returned when accessing `/api/query` from a
+browser, can be really useful for debugging when the Django debug toolbar is
+enabled. Setting `DEBUG=True` and installing the toolbar allows you to inspect
+the SQL statements issued by search commands along with a wealth of other
+diagnostic information.
 
 ### Example Usage
 

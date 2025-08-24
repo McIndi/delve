@@ -29,14 +29,23 @@ Delve is a versatile and powerful platform for ingesting, transforming, and sear
 Delve is built around several core concepts that enable its powerful functionality:
 
 ### Events
-Events are the basic unit of data in Delve. They are stored in a database and consist of indexed fields such as `created`, `index`, `source`, and `host`. Additionally, events contain a JSON field called `extracted_fields` for storing information extracted from the event.
+Events are the basic unit of data in Delve. They are stored in a database and
+consist of indexed fields such as `created`, `index`, `source`, and `host`.
+Additionally, events contain a JSON field called `extracted_fields` for storing
+information extracted from the event.
 
-Events can be created through the Delve REST API or via queries using search commands, either interactively or on a scheduled basis.
+Events can be created through the Delve REST API or via queries using search
+commands, either interactively or on a scheduled basis. If you are writing code
+against Delve itself, you may also create `Event` instances directly using the
+Django ORM.
 
 ### Queries
 Queries are used to retrieve, transform, and store data. They can be ephemeral or persisted in the database. A query's `text` field defines the pipeline through which events are processed using search commands.
 
-Queries use a pipeline syntax where commands are chained together with the `|` operator, similar to command-line shells. For example:
+Queries use a pipeline syntax where commands are chained together with the `|`
+operator, similar to command-line shells. All whitespace in a query is collapsed
+so breaking a pipeline across multiple lines is perfectly fine and can aid
+readability. For example:
 
 ```bash
 search --last-15-minutes index=default
@@ -54,16 +63,30 @@ Ingestion is the process of importing data into Delve. This can be done through 
 - **Searches**: Use interactive or scheduled queries to ingest data.
 
 ### Field Extraction and Preprocessing
-Field extraction identifies and extracts specific fields from data. Delve supports:
-- **Index-time Extractions**: Applied during data ingestion and persisted in the database.
-- **Search-time Extractions**: Dynamically extract fields during a search (can be persisted to the database or ephemeral).
-- **Preprocessing**: Take action (email, log, etc.) on certain events during ingestion.
+Field extraction identifies and extracts specific fields from data. Delve
+supports:
+- **Index-time Extractions**: Applied during data ingestion and persisted in the
+  database. Update `DELVE_EXTRACTION_MAP` in `settings.py` to map sourcetypes to
+  the appropriate extraction functions.
+- **Search-time Extractions**: Dynamically extract fields during a search (can
+  be persisted to the database or ephemeral). The `qs_update` search command can
+  be used to update events at search time after new fields are extracted.
+- **Preprocessing**: Take action (email, log, etc.) on certain events during
+  ingestion. Register processor functions in `DELVE_PROCESSOR_MAP` in
+  `settings.py` based on the event sourcetype.
 
 ### Search
-Search functionality allows querying and filtering data, as well as performing transformations, visualizations, and more. Delve supports custom search commands written in Python, which can be registered in the configuration.
+Search functionality allows querying and filtering data, as well as performing
+transformations, visualizations, and more. Delve supports custom search
+commands written in Python, which can be registered in the configuration. The
+`DELVE_SEARCH_COMMANDS` setting in `settings.py` can be updated to add or remove
+available search commands.
 
 ### Custom Apps
-Delve enables the creation of custom apps to group related data and code. These apps can include custom search commands, dashboards, REST API endpoints, and more.
+Delve enables the creation of custom apps to group related data and code. These
+apps can include custom search commands, dashboards, REST API endpoints, and
+more. Custom apps are added to the `INSTALLED_APPS` setting in `settings.py` so
+that Django knows to load them.
 
 ### Alerts
 Delve provides search-based and processor-based alerts:
