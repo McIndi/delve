@@ -106,7 +106,23 @@ python service.py /?
 ```
 
 ### Installing Delve Supervisor Service on Other Platforms
-This feature is coming soon. Until then, please consult your operating system's documentation for information on hosting services (Systemd, etc.) to have Delve automatically started and monitored.
+On non-Windows platforms the recommended approach for running Delve is to use
+Docker and `docker-compose`.  The repository includes a
+`docker-compose.yaml` that defines services for the web server, background
+worker, and a PostgreSQL database.  These containers replace the need for a
+separate supervisor service by handling start-up and restart logic for you.
+
+To get started, copy the provided `.env.example` file to `.env` and adjust the
+settings for your environment. Then launch the stack:
+
+```bash
+cp .env.example .env
+docker compose up -d
+```
+
+`docker-compose` will orchestrate the containers and keep them running, making
+it an easy way to deploy Delve on Linux and macOS without manually configuring
+init systems like Systemd.
 
 
 [Previous: Introduction](/doc/admin/Introduction.md) | [Next: Bootstrap Guide](/doc/admin/Bootstrap_Guide.md)

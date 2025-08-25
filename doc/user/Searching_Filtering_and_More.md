@@ -25,7 +25,13 @@ Queryset transformation commands act on Django Querysets (such as the output of 
 
 ## Generic Transformations
 
-Generic transformation commands modify data from a source command in some way. These commands are designed to be versatile and work well with diverse sets of data, although they may be slower than their `qs_` counterparts.
+Generic transformation commands modify data from a source command in some way.
+While Queryset Transformations accept and return Django `QuerySet` objects,
+Generic Transformations are designed to accept and return arbitrary Python data
+structures (`int`, `str`, `list`, `dict`, `tuple`, etc.). A list of dictionaries
+representing rows is a common pattern. These commands are versatile and work
+well with diverse sets of data, although they may be slower than their `qs_`
+counterparts.
 
 ### Example Commands
 
@@ -133,10 +139,17 @@ search --index {{ index }} text__icontains="{{ keyword }}"
 
 In this example, `{{ index }}` and `{{ keyword }}` are Jinja2 template variables that will be replaced with their corresponding values from the context.
 
-This can be useful for including different sets of arguments to the same search command to get different results or behavior. It can also be used with the `query_table` and `query_chart` templatetags which accept Django Form instances for use in dashboards and control panels.
+This can be useful for including different sets of arguments to the same search
+command to get different results or behavior. Combined with the `query_table`
+and `query_chart` templatetags, a Django `Form` instance can be rendered in a
+dashboard to collect user input and feed values directly into a query. This
+combination of forms, template tags, and Jinja2 templating makes it easy to
+build powerful interactive dashboards and control panels.
 
 ## send_email Command
-The `send_email` command allows you to send email notifications based on the result set. This command is configured using Django's SMTP settings. For example:
+The `send_email` command allows you to send email notifications based on the
+result set. This command is configured using Django's SMTP settings and only
+sends an email when the result set contains at least one event. For example:
 
 ```bash
 search --index default text__icontains="error" | send_email to="team@example.com" subject="Error Alert"
@@ -175,37 +188,37 @@ make_events --save
 ```
 
 ## Custom Search Commands
-Delve allows you to create custom search commands in Python and register them in `settings.py` under `DELVE_SEARCH_COMMANDS`. This provides powerful and flexible ways to manipulate the result set.
+To create a custom search command, first build an `argparse.ArgumentParser` to
+describe any arguments the command accepts. Then write a function that operates
+on the events and wrap it with the
+`events.search_commands.decorators.search_command` decorator, passing the parser
+instance. The decorator parses the arguments and supplies them to your
+function.
 
 ### Example Custom Command
-Here is an example of a custom search command:
 
 ```python
-# filepath: /delve/search_commands/custom_command.py
-def custom_command(events, **kwargs):
-    # Custom logic to process events
-    for event in events:
-        event['custom_field'] = 'custom_value'
-    return events
-```
+# filepath: /delve/search_commands/shout.py
+from argparse import ArgumentParser
+from events.search_commands.decorators import search_command
 
-Alternatively, you could write it as a generator which could possibly improve memory usage:
+parser = ArgumentParser(prog='shout')
+parser.add_argument('--field', required=True)
 
-```python
-# filepath: /delve/search_commands/custom_command.py
-def custom_command(events, **kwargs):
-    # Custom logic to process events
+@search_command(parser)
+def shout(events, field):
     for event in events:
-        event['custom_field'] = 'custom_value'
+        event[field] = event[field].upper()
         yield event
 ```
-To register the custom command, add it to `settings.py`:
+
+Register the custom command in `settings.py`:
 
 ```python
 # filepath: /delve/settings.py
 DELVE_SEARCH_COMMANDS = {
     ...
-    'custom_command': 'delve.search_commands.custom_command.custom_command',
+    'shout': 'delve.search_commands.shout.shout',
     ...
 }
 ```
@@ -238,6 +251,9 @@ There are some special functions that are particularly useful for searching, tra
   ```python
   qs_annotate transformed_key=KT('json_field__key__1__foobar')
   ```
+- `Func`: The base class for database functions from `django.db.models`. Use
+  this when calling functions like `Lower`, `Upper`, `Length`, `Trim`, `Cast`,
+  `Coalesce`, `Concat`, or `Now`.
 
 #### Available Functions
 

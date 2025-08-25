@@ -26,6 +26,18 @@ DATABASES = {
 
 **NOTE**: The second argument to `os.getenv` is for the default value if the environment variable is not set.
 
+## Configuration with docker-compose
+When running Delve with Docker, configuration values are typically supplied via
+environment variables defined in an `.env` file.  The project includes a
+`docker-compose.yaml` and a corresponding `.env.example` file.  Copy the example
+file to `.env`, update the values for your database and secret key, and
+`docker-compose` will inject those settings into the containers at startup.
+
+The standard `delve/settings.py` already looks for these environment variables,
+so no additional changes are required to the image.  This approach keeps secrets
+out of the settings file while still allowing easy configuration for different
+environments.
+
 ## Configuring Email Settings
 Django provides a flexible email backend system that allows you to configure various email settings. Here are the steps to configure email settings in `settings.py`:
 

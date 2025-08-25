@@ -45,6 +45,22 @@ class MyCustomModel(models.Model):
     datetime_field = models.DateTimeField(db_index=True)
 ```
 
+### BRIN Indexes in PostgreSQL
+For very large tables in PostgreSQL, a [BRIN index](https://www.postgresql.org/docs/current/brin-intro.html)
+can dramatically reduce index size while still allowing efficient scans of
+time-ordered data. Delve stores event timestamps in the `created` field of the
+`events.Event` model, making it a good candidate for a BRIN index:
+
+```sql
+CREATE INDEX CONCURRENTLY events_event_created_brin
+    ON events_event USING BRIN (created);
+```
+
+You can also create this index via a Django migration using
+`django.contrib.postgres.indexes.BrinIndex`. BRIN indexes are especially useful
+when events are inserted roughly in chronological order, which is typical for
+log data.
+
 ## Caching Strategies
 Caching can help reduce the load on your database and improve response times. Django provides several caching backends, including in-memory caching, file-based caching, and more.
 
