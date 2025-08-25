@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  db:
+    image: docker.io/library/postgres:latest
+    environment:
+      POSTGRES_DB: ${DELVE_DATABASE_NAME:?Set DELVE_DATABASE_NAME in .env}
+      POSTGRES_USER: ${DELVE_DATABASE_USER:?Set DELVE_DATABASE_USER in .env}
+      POSTGRES_PASSWORD: ${DELVE_DATABASE_PASSWORD:?Set DELVE_DATABASE_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  web:
+    build: .
+    command: python manage.py serve
+    env_file:
+      - .env
+    environment:
+      DELVE_DATABASE_ENGINE: ${DELVE_DATABASE_ENGINE:?Set DELVE_DATABASE_ENGINE in .env}
+      DELVE_DATABASE_NAME: ${DELVE_DATABASE_NAME:?Set DELVE_DATABASE_NAME in .env}
+      DELVE_DATABASE_USER: ${DELVE_DATABASE_USER:?Set DELVE_DATABASE_USER in .env}
+      DELVE_DATABASE_PASSWORD: ${DELVE_DATABASE_PASSWORD:?Set DELVE_DATABASE_PASSWORD in .env}
+      DELVE_DATABASE_HOST: ${DELVE_DATABASE_HOST:?Set DELVE_DATABASE_HOST in .env}
+      DELVE_DATABASE_PORT: ${DELVE_DATABASE_PORT:?Set DELVE_DATABASE_PORT in .env}
+      DELVE_SECRET_KEY: ${DELVE_SECRET_KEY:?Set DELVE_SECRET_KEY in .env}
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: python manage.py qcluster
+    env_file:
+      - .env
+    environment:
+      DELVE_DATABASE_ENGINE: ${DELVE_DATABASE_ENGINE:?Set DELVE_DATABASE_ENGINE in .env}
+      DELVE_DATABASE_NAME: ${DELVE_DATABASE_NAME:?Set DELVE_DATABASE_NAME in .env}
+      DELVE_DATABASE_USER: ${DELVE_DATABASE_USER:?Set DELVE_DATABASE_USER in .env}
+      DELVE_DATABASE_PASSWORD: ${DELVE_DATABASE_PASSWORD:?Set DELVE_DATABASE_PASSWORD in .env}
+      DELVE_DATABASE_HOST: ${DELVE_DATABASE_HOST:?Set DELVE_DATABASE_HOST in .env}
+      DELVE_DATABASE_PORT: ${DELVE_DATABASE_PORT:?Set DELVE_DATABASE_PORT in .env}
+      DELVE_SECRET_KEY: ${DELVE_SECRET_KEY:?Set DELVE_SECRET_KEY in .env}
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,0 +1,23 @@
+requests
+django
+djangorestframework
+markdown
+django-debug-toolbar
+cherrypy
+whitenoise
+croniter
+django-q2
+rich
+python-dateutil
+jinja2
+django_bootstrap5
+pydantic
+xmltodict
+python-json-logger
+django_extensions
+records
+psutil
+pygments
+uuid_utils
+psycopg2-binary
+pywin32 ; sys_platform == 'win32'

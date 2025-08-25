@@ -1,149 +1,233 @@
-# Delve - Enterprise Data Analytics Platform
+# Delve
 
-**NOTICE**: Delve is in Alpha pre-release. Please try it out and provide feedback of any issues or missing features you encounter, but production use is discouraged at the moment.
+Delve is a powerful, extensible platform for ingesting, transforming, and searching structured, unstructured, and semi-structured data. It is designed for easy local development, robust production deployments, and seamless integration with modern tools and containerization workflows.
 
-## License
+## Features
+- Ingest data from diverse sources (REST API, file tail, syslog, scheduled queries)
+- Transform and normalize data with custom pipelines
+- Perform powerful search and filtering with a pipeline syntax
+- Create interactive dashboards and visualizations
+- Set up alerts and notifications
+- Extend functionality with custom apps and commands
 
-Delve is licensed under the GNU Affero General Public License v3 (AGPL-3.0).
+## Project Structure
+- `manage.py` at the repository root for standard Django management
+- Core apps (e.g., `events`, `users`) and configuration in top-level folders
+- `requirements.txt` and `pyproject.toml` for Python dependencies
+- `bootstrap.py` for automated build, packaging, and asset management
+- `frontend/` for JavaScript and SCSS assets
+- `doc/` for user and admin documentation
+- `utilities/cli/` for ingestion utilities such as `tail-files.py` and `syslog-receiver.py`
 
-This means:
-- You are free to use, modify, and distribute this software, provided that any network-accessible modifications are also made available under the same license.
-- The full license text is available in the [LICENSE](./LICENSE) file and at [https://www.gnu.org/licenses/agpl-3.0.html](https://www.gnu.org/licenses/agpl-3.0.html).
+## Quick Start
 
-If you deploy a modified version of Delve on a server and allow users to interact with it over a network, you must also make the source code of your modified version available to those users.
+### 1. Clone the repository
+```bash
+git clone https://github.com/notesofcliff/delve
+cd delve
+```
 
-For more information, see the [GNU AGPL FAQ](https://www.gnu.org/licenses/agpl-3.0-faq.html).
+### 2. Create and activate a virtual environment
+```bash
+python -m venv .venv
+.venv\Scripts\activate  # On Windows
+source .venv/bin/activate  # On Linux/macOS
+```
 
-Please use the Issues section of this repository for feature requests, bug reports, and general feedback.
 
-## Overview
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Delve is an enterprise-grade platform for ingesting, analyzing, and deriving insights from any data source. Key capabilities include:
 
-- **Data Integration**
-  - REST API endpoints
-  - Syslog receiver (UDP/TCP/TLS)
-  - File monitoring and ingestion
-  - Direct uploads
-  
-- **Analysis & Visualization**
-  - Interactive search interface
-  - Pipeline-based query language
-  - Custom dashboards
-  - Real-time alerts
-  
-- **Enterprise Features**
-  - Role-based access control
-  - Custom app development
-  - API-first architecture
-  - Extensible search commands
-  - Scheduled tasks and automation
+### 4. Run database migrations
+```bash
+python manage.py migrate
+```
 
-# Installation
+### 5. Install frontend dependencies and build assets
+```bash
+npm install
+npx webpack --config webpack.config.js
+```
 
-1. Download one of the pre-built zip files from the [releases page](https://github.com/DelveCorp/delve/releases/).
-2. Unzip the file in the desired location.
-3. That's it!
+### 6. Collect static files
+```bash
+python manage.py collectstatic --no-input
+```
 
-# Initial Setup
+### 7. Create a superuser
+```bash
+python manage.py createsuperuser
+```
 
-After installation, setup can be as simple or as complex as you need.
+### 8. Start the development server
+```bash
+python manage.py runserver
+```
 
-The simplest setup involves using the default settings. The default settings are designed to be most useful to someone who is looking to quickly ingest some data (like log files or a REST API) and would like to search, transform, correlate, store, or otherwise interact with that data.
+### 9. (Optional) Start additional services
+```bash
+# Task scheduler
+python manage.py qcluster
 
-This use-case can be quite handy if you need to quickly troubleshoot an issue or would like to crawl a REST API for information.
+# Syslog server
+python utilities/cli/syslog-receiver.py
 
-To start using Delve with the simplest setup, use the following commands:
+# Tail log files
+python utilities/cli/tail-files.py /var/log/*.log
+```
+
+> **Defaults:** Delve ships with Whitenoise + CherryPy by default to keep air-gapped/offline use simple. Swap components as desired.
+## Dependency Management
+
+All Python runtime dependencies are managed via a single, pinned `requirements.txt` at the repository root. Do not add runtime dependencies to `pyproject.toml` or use `pip install .` or `pip install -e .`. For local development, Docker, and ZIP/air-gapped workflows, always install with:
 
 ```bash
-# Copy the example settings and urls files
-cp ./delve/example-settings.py ./delve/settings.py
-cp ./delve/example-urls.py ./delve/urls.py
-
-# Create the database
-./fl migrate
-
-# Run the tests
-./fl test
-
-# Create an admin user
-./fl createsuperuser
-
-# Start serving the web UI
-./fl serve
-
-# In another window, you can start the task runner
-./fl qcluster
+pip install -r requirements.txt
 ```
+
+If you need to update dependencies, edit `requirements.txt` directly.
+
+
+## Database Creation in Docker Compose
+
+When you set `DELVE_DATABASE_NAME`, `DELVE_DATABASE_USER`, and `DELVE_DATABASE_PASSWORD` in your `.env`, the Postgres container automatically creates the database and user with those credentials on first startup. No manual setup is required.
+
+## Using Delve with Docker Compose
+
+Delve ships with a `docker-compose.yaml` for easy setup. Make sure to copy `.env.example` to `.env` and fill in required values (see comments in the file).
+
+### Build and Start All Services
+```bash
+docker-compose up --build
+```
+This will build the images and start the web server, worker, and Postgres database.
+
+### Run Database Migrations (required after first start)
+```bash
+docker-compose exec web python manage.py migrate
+```
+
+### Create a Superuser (for admin access)
+```bash
+docker-compose exec web python manage.py createsuperuser
+```
+
+### View Logs for All Services
+```bash
+docker-compose logs -f
+```
+
+### Restart All Services
+```bash
+docker-compose restart
+```
+
+### Stop and Remove All Containers
+```bash
+docker-compose down
+```
+
+Visit http://127.0.0.1:8000/ in your browser to access the web UI.
+
+### Docker Troubleshooting & Cleanup
+- If a service fails to start, check logs with `docker-compose logs <service>`
+- If environment variables are missing, Compose will error out with a message (for required secrets and DB credentials)
+- To rebuild images after changing the Dockerfile, use `docker-compose build`
+
+#### Inspect Docker State
+- List all containers (running and stopped):
+  ```bash
+  docker ps -a
+  ```
+- List all images:
+  ```bash
+  docker images
+  ```
+- List all volumes:
+  ```bash
+  docker volume ls
+  ```
+- Show disk usage (images, containers, volumes, build cache):
+  ```bash
+  docker system df
+  ```
+
+#### Clean Docker Environment (remove all containers, images, volumes, caches)
+- Remove stopped containers:
+  ```bash
+  docker container prune -f
+  ```
+- Remove unused images:
+  ```bash
+  docker image prune -a -f
+  ```
+- Remove unused volumes:
+  ```bash
+  docker volume prune -f
+  ```
+- Remove everything (containers, images, volumes, networks, build cache):
+  ```bash
+  docker system prune -a -f
+  ```
+
+## Advanced: Automated Build & Packaging For Air-Gapped Systems
+
+You can use `bootstrap.py` to automate building, packaging, and asset management for deployment to air-gapped systems. While containerization is also supported, this utility enables deployment to air-gapped environments without requiring dependencies on the target system.
+
+After running the following commands, you will have a zip file under `./dist/` containing everything needed to deploy Delve to an air-gapped system, including source code, Python interpreter, frontend and backend dependencies, and more:
+
+- Clean build artefacts:
+  ```bash
+  python bootstrap.py clean --all
+  ```
+- Download and extract Python:
+  ```bash
+  python bootstrap.py download_python
+  python bootstrap.py extract_python
+  ```
+- Install Python dependencies:
+  ```bash
+  python bootstrap.py run_pip_install
+  ```
+- Install frontend dependencies and build assets:
+  ```bash
+  python bootstrap.py run_npm_install
+  python bootstrap.py build_frontend
+  ```
+- Collect static files:
+  ```bash
+  python bootstrap.py collectstatic
+  ```
+- Package everything:
+  ```bash
+  python bootstrap.py package
+  ```
+
+Or run all steps in sequence:
+```bash
+python bootstrap.py all
+```
+
+See `doc/admin/Bootstrap_Guide.md` for full details and extensibility options.
 
 ## Documentation
+- **User Guide:** `doc/user/Getting_Started.md`
+- **Admin Guide:** `doc/admin/Installation_and_Setup.md`, `doc/admin/Bootstrap_Guide.md`
+- **API Reference:** Browse the REST API via the web UI after starting the server
 
-- [Admin Manual](./src/home/doc/admin/index.md): Deployment, configuration, and system administration
-- [User Manual](./src/home/doc/user/index.md): Search syntax, dashboards, and data analysis
-- API Documentation: Available at `/api/docs` after installation
+## Key Concepts
+- **Events:** The core data unit, with indexed and extracted fields
+- **Queries:** Pipeline-based data retrieval and transformation
+- **Ingestion:** Multiple methods, including REST, file tail, and syslog
+- **Field Extraction:** Index-time and search-time extraction
+- **Custom Apps:** Extend Delve with new commands, dashboards, and APIs
+- **Alerts:** Search-based and processor-based alerting
 
-# Configuration
+## Contributing
+Contributions are welcome! Please see the documentation and open an issue or pull request.
 
-Configuration settings are located in `$DELVE_HOME/delve/settings.py`.
-
-On a fresh install, there is no settings.py or urls.py. This is done to prevent overwriting a user's settings.py or urls.py if the install package is used as an update. So, if you are using the default configuration, you must copy the files `./delve/example-settings.py` and `./delve/example-urls.py` like in the command above. 
-
-All Delve-specific settings are prefixed with `DELVE`.
-
-The other settings in `settings.py` are specific to Django and the Django Rest Framework and can be found throughout the file.
-
-# Development
-
-In order to run Delve directly from the repo for development purposes,
-use the following commands to perform standard tasks:
-
-```bash
-git clone $REPO_DIR    # TODO
-cd delve
-
-# Provision backend db, python requirements, etc
-cd src
-cd home
-
-# Optionally, clear out old data
-find . -type d -name __pycache__ -exec rm -fr {} ';'
-rm -fr .venv
-rm db.sqlite3
-rm -fr staticfiles/*
-
-# provision python venv, install Python dependencies and collect static assets
-python -m venv .venv
-.venv\Scripts\activate.bat
-python -m pip install --upgrade pip
-python -m pip install -r ..\..\windows-requirements.txt
-python manage.py collectstatic --no-input
-
-# Bundle frontend dependencies
-cd ..
-cd ..
-npx webpack --config webpack.config.js
-npx webpack --config dltable-webpack.config.js
-npx webpack --config dlchart-webpack.config.js
-
-# Copy frontend assets
-mkdir src\home\staticfiles\js\
-cp dist/staticfiles/dl-explore.js src/home/staticfiles/js/dl-explore.js
-cp dist/staticfiles/dl-explore.js.LICENSE.txt src/home/staticfiles/js/dl-explore.js.LICENSE.txt
-
-cp dist/staticfiles/dl-chart.js src/home/staticfiles/js/dl-chart.js
-cp dist/staticfiles/dl-chart.js.LICENSE.txt src/home/staticfiles/js/dl-chart.js.LICENSE.txt
-
-cp dist/staticfiles/dl-table.js src/home/staticfiles/js/dl-table.js
-cp dist/staticfiles/dl-table.js.LICENSE.txt src/home/staticfiles/js/dl-table.js.LICENSE.txt
-
-cp dist/main.css src/home/staticfiles/css/main.css
-cp dist/*.woff src/home/staticfiles/css/
-cp dist/*.woff2 src/home/staticfiles/css/
-
-# Create database, admin user and start the server
-cd src
-cd home
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py serve
-```
+## License
+Delve is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See `doc/LICENSES.txt` for details.

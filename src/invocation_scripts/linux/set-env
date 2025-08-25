@@ -1,4 +1,0 @@
-export PYTHON_VERSION={PYTHON_VERSION}
-export DELVE_HOME=$(dirname $0)
-export PATH=$DELVE_HOME:$PATH
-export PATH=$DELVE_HOME/python/$PYTHON_VERSION/bin:$PATH

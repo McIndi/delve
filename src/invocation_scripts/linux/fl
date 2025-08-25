@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-source ./set-env
-
-cd "$DELVE_HOME" || exit
-
-python/"$PYTHON_VERSION"/bin/python3 manage.py "$@"
