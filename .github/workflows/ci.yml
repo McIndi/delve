@@ -45,7 +45,7 @@ jobs:
         shell: cmd
         run: |
           cd build\assemble
-          dlv.bat test
+          python manage.py test
 
   build-and-test-linux:
     name: Build and Test on Ubuntu
@@ -72,7 +72,7 @@ jobs:
       - name: Run test suite
         run: |
           cd build/assemble
-          ./dlv test
+          python manage.py test
 
 # Notifications:
 # - GitHub will show pass/fail in the UI and send email to repository watchers if enabled.

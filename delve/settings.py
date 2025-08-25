@@ -443,9 +443,10 @@ Q_CLUSTER = {
 # Delve service commands, If service.py is used to create a Windows Service
 # Then these are commands that will be run. They are expected to stay running
 # and will be restarted if they exit.
+python = Path(sys.executable)
 DELVE_SERVICE_COMMANDS = [
-    str(BASE_DIR / 'fl.bat') + ' serve',
-    str(BASE_DIR / 'fl.bat') + ' qcluster',
+    f'{python} {BASE_DIR / "manage.py"} serve',
+    f'{python} {BASE_DIR / "manage.py"} qcluster',
 ]
 
 # The number of seconds to sleep between health checks on child processes
