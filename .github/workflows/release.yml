@@ -40,11 +40,18 @@ jobs:
         run: |
           cd build\assemble
           python manage.py test
-      - name: Upload Windows Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: windows-dist
-          path: dist/DELVE_*.zip
+      - name: Upload each Windows zip as a separate artifact
+        run: |
+          for f in dist/DELVE_*.zip; do
+            echo "Uploading $f"
+            gh api \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              /repos/${{ github.repository }}/actions/artifacts \
+              -F name="$(basename "$f")" \
+              -F file=@"$f"
+          done
 
   build-test-linux:
     name: Build and Test on Ubuntu
@@ -109,11 +116,18 @@ jobs:
         run: |
           cd build/assemble
           python manage.py test
-      - name: Upload Linux Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-dist
-          path: dist/DELVE_*.zip
+      - name: Upload each Linux zip as a separate artifact
+        run: |
+          for f in dist/DELVE_*.zip; do
+            echo "Uploading $f"
+            gh api \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              /repos/${{ github.repository }}/actions/artifacts \
+              -F name="$(basename "$f")" \
+              -F file=@"$f"
+          done
 
   release:
     name: Create Release and Upload All Artifacts
