@@ -145,17 +145,17 @@ jobs:
           gh release create "v${{ needs.build-test-linux.outputs.version }}" --title "Delve ${{ needs.build-test-linux.outputs.version }}" --notes ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Unzip all zip files in dist/
-        run: |
-          for archive in dist/*; do
-            unzip -o "$archive" -d dist/
-          done
-      - name: Remove windows-dist.zip and linux-dist.zip
-        run: |
-          rm -f dist/windows-dist.zip dist/linux-dist.zip
+      # - name: Unzip all zip files in dist/
+      #   run: |
+      #     for archive in dist/*/*.zip; do
+      #       unzip -o "$archive" -d dist/
+      #     done
+      # - name: Remove windows-dist.zip and linux-dist.zip
+      #   run: |
+      #     rm -f dist/windows-dist.zip dist/linux-dist.zip
       - name: Upload Release Assets
         run: |
-          for file in dist/*.zip; do
+          for file in dist/**/*.zip; do
             gh release upload "v${{ needs.build-test-linux.outputs.version }}" "$file" --clobber
           done
         env:
