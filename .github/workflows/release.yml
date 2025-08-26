@@ -1,6 +1,6 @@
 # GitHub Actions workflow for building, testing, and releasing Delve on version bump
 # This workflow runs on both Windows and Ubuntu runners
-# It only creates a release if the version in src/home/delve/__init__.py changes on main
+# It only creates a release if the version in delve/__init__.py changes on main
 
 name: Build, Test, and Release Delve
 
@@ -69,13 +69,13 @@ jobs:
       - name: Get current version
         id: current_version
         run: |
-          VERSION=$(grep -Po '(?<=__version__ = ")([^"]+)' src/home/delve/__init__.py)
+          VERSION=$(grep -Po '(?<=__version__ = ")([^"]+)' delve/__init__.py)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Get previous version
         id: previous_version
         run: |
           git fetch origin main --depth=2
-          PREV_VERSION=$(git show HEAD^:src/home/delve/__init__.py 2>/dev/null | grep -Po '(?<=__version__ = ")([^"]+)' || echo "")
+          PREV_VERSION=$(git show HEAD^:delve/__init__.py 2>/dev/null | grep -Po '(?<=__version__ = ")([^"]+)' || echo "")
           echo "version=$PREV_VERSION" >> $GITHUB_OUTPUT
       - name: Check if release exists
         id: check_release
