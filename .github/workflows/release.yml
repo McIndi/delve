@@ -41,6 +41,8 @@ jobs:
           cd build\assemble
           python manage.py test
       - name: Upload each Windows zip as a separate artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for f in dist/DELVE_*.zip; do
             echo "Uploading $f"
@@ -117,6 +119,8 @@ jobs:
           cd build/assemble
           python manage.py test
       - name: Upload each Linux zip as a separate artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for f in dist/DELVE_*.zip; do
             echo "Uploading $f"
