@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-dist
-          path: dist/DELVE-*.zip
+          path: dist/DELVE_*.zip
 
   build-test-linux:
     name: Build and Test on Ubuntu
@@ -113,7 +113,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-dist
-          path: dist/DELVE-*.zip
+          path: dist/DELVE_*.zip
 
   release:
     name: Create Release and Upload All Artifacts
