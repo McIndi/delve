@@ -40,20 +40,21 @@ jobs:
         run: |
           cd build\assemble
           python manage.py test
-      - name: Upload each Windows zip as a separate artifact
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: List Windows zip files
+        id: list_windows_zips
+        shell: bash
         run: |
-          for f in dist/DELVE_*.zip; do
-            echo "Uploading $f"
-            gh api \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              /repos/${{ github.repository }}/actions/artifacts \
-              -F name="$(basename "$f")" \
-              -F file=@"$f"
-          done
+          ls dist/DELVE_*.zip > windows_zip_list.txt
+          echo "files=$(cat windows_zip_list.txt | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: Upload each Windows zip as a separate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.zip }}
+          path: dist/${{ matrix.zip }}
+        strategy:
+          matrix:
+            zip: [${{ steps.list_windows_zips.outputs.files }}]
 
   build-test-linux:
     name: Build and Test on Ubuntu
@@ -118,20 +119,21 @@ jobs:
         run: |
           cd build/assemble
           python manage.py test
-      - name: Upload each Linux zip as a separate artifact
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: List Linux zip files
+        id: list_linux_zips
+        shell: bash
         run: |
-          for f in dist/DELVE_*.zip; do
-            echo "Uploading $f"
-            gh api \
-              -X POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              /repos/${{ github.repository }}/actions/artifacts \
-              -F name="$(basename "$f")" \
-              -F file=@"$f"
-          done
+          ls dist/DELVE_*.zip > linux_zip_list.txt
+          echo "files=$(cat linux_zip_list.txt | tr '\n' ',')" >> $GITHUB_OUTPUT
+
+      - name: Upload each Linux zip as a separate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.zip }}
+          path: dist/${{ matrix.zip }}
+        strategy:
+          matrix:
+            zip: [${{ steps.list_linux_zips.outputs.files }}]
 
   release:
     name: Create Release and Upload All Artifacts
