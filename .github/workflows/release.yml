@@ -147,7 +147,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Unzip all zip files in dist/
         run: |
-          for archive in dist/*-dist; do
+          for archive in dist/*; do
             unzip -o "$archive" -d dist/
           done
       - name: Remove windows-dist.zip and linux-dist.zip
