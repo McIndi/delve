@@ -15,6 +15,8 @@ import requests
 import hashlib
 from typing import List
 
+from delve import __version__ as DELVE_VERSION
+
 __here__ = pathlib.Path(__file__).parent.resolve()
 
 
@@ -326,10 +328,20 @@ def stage_for_package(args):
 
 def package(args):
     """Create a zip file containing everything needed to run an instance of delve."""
+    plat, plat_str = get_platform()
     assemble_dir = args.assemble_dir.resolve()
     dist_dir = args.dist_dir.resolve()
     dist_dir.mkdir(parents=True, exist_ok=True)
-    zip_name = args.output or dist_dir / "delve_package.zip"
+    packaged_python = assemble_dir / "python"
+    if plat == "windows":
+        # Windows
+        packaged_python = packaged_python / "python.exe"
+    else:
+        # Linux and MacOS
+        packaged_python = packaged_python / "bin" / "python3"
+    python_version = subprocess.check_output([str(packaged_python), "--version"]).decode().strip().split()[1]
+
+    zip_name = args.output or dist_dir / f"DELVE_v{DELVE_VERSION}_cpython-{python_version}_{plat}.zip"
     exclude_patterns = ["node_modules", ".git", "*.log", "__pycache__", "build", "dist"]
     def exclude_func(dir, files):
         excluded = set()
@@ -339,9 +351,34 @@ def package(args):
     if args.dry_run:
         logging.info(f"Dry run: Would create zip {zip_name} from {assemble_dir}, excluding {exclude_patterns}")
         return
-    shutil.make_archive(str(zip_name).replace('.zip',''), 'zip', root_dir=assemble_dir, base_dir='.', logger=logging.getLogger(),
-                       )
+    shutil.make_archive(
+        str(zip_name).replace('.zip',''),
+        'zip',
+        root_dir=assemble_dir,
+        base_dir='.',
+        logger=logging.getLogger(),
+    )
     logging.info(f"Created package: {zip_name}")
+
+    # Remove the python directory and create a second package without the interpreter
+    python_dir = assemble_dir / "python"
+    if python_dir.exists():
+        if python_dir.is_dir():
+            shutil.rmtree(python_dir)
+        else:
+            raise ValueError(f"Unexpected file type for python directory: {python_dir}")
+        logging.info(f"Deleted python directory: {python_dir}")
+
+    # Create second package filename (without python version)
+    zip_name_no_python = args.output or (dist_dir / f"DELVE_v{DELVE_VERSION}_{plat}_update.zip")
+    shutil.make_archive(
+        str(zip_name_no_python).replace('.zip',''),
+        'zip',
+        root_dir=assemble_dir,
+        base_dir='.',
+        logger=logging.getLogger(),
+    )
+    logging.info(f"Created package without python: {zip_name_no_python}")
 
 
 # --- Run All Steps ---
