@@ -43,7 +43,7 @@ jobs:
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
-          # name: windows-dist
+          name: windows-dist
           path: dist/DELVE_*.zip
 
   build-test-linux:
@@ -112,7 +112,7 @@ jobs:
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
-          # name: linux-dist
+          name: linux-dist
           path: dist/DELVE_*.zip
 
   release:
@@ -145,6 +145,14 @@ jobs:
           gh release create "v${{ needs.build-test-linux.outputs.version }}" --title "Delve ${{ needs.build-test-linux.outputs.version }}" --notes ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Unzip all zip files in dist/
+        run: |
+          for archive in dist/*.zip; do
+            unzip -o "$archive" -d dist/
+          done
+      - name: Remove windows-dist.zip and linux-dist.zip
+        run: |
+          rm -f dist/windows-dist.zip dist/linux-dist.zip
       - name: Upload Release Assets
         run: |
           for file in dist/DELVE*.zip; do
