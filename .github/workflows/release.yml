@@ -26,6 +26,11 @@ jobs:
           pip install -r requirements.txt
       - name: Run build script
         run: python bootstrap.py all
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Prepare settings and urls
         run: |
           copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
@@ -62,6 +67,11 @@ jobs:
           pip install -r requirements.txt
       - name: Run build script
         run: python bootstrap.py all
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
       - name: Prepare settings and urls
         run: |
           cp build/assemble/delve/example-settings.py build/assemble/delve/settings.py

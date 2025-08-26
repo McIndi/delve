@@ -227,7 +227,7 @@ def run_npm_install(args):
     logging.debug(f"Using npm executable: {npm_exe}")
     cwd = args.directory or __here__
     logging.debug(f"Using working directory: {cwd}")
-    cmd = f"{npm_exe} install"
+    cmd = f"{npm_exe} install --fetch-retries=5"
     logging.debug(f"Running command: {cmd} in {cwd}")
     if args.dry_run:
         logging.info(f"Dry run: Would run: {cmd} in {cwd}")

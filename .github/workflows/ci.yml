@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '24.4.1'  # or your required version
+          node-version: '24.4.1'
       - name: Check npm location
         run: where npm
         shell: cmd
