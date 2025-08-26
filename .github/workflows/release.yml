@@ -128,7 +128,7 @@ jobs:
       - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
-          path: all-artifacts
+          path: dist
       - name: Check if release exists
         id: check_release
         run: |
@@ -147,7 +147,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload Release Assets
         run: |
-          for file in all-artifacts/**/*.zip; do
+          for file in dist/DELVE*.zip; do
             gh release upload "v${{ needs.build-test-linux.outputs.version }}" "$file" --clobber
           done
         env:
