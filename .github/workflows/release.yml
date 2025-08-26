@@ -25,7 +25,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run build script
-        run: python build.py
+        run: python bootstrap.py
       - name: Prepare settings and urls
         run: |
           copy build\assemble\delve\example-settings.py build\assemble\delve\settings.py
@@ -34,7 +34,7 @@ jobs:
         shell: cmd
         run: |
           cd build\assemble
-          ./fl.bat test
+          python manage.py test
       - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -61,7 +61,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run build script
-        run: python build.py
+        run: python bootstrap.py
       - name: Prepare settings and urls
         run: |
           cp build/assemble/delve/example-settings.py build/assemble/delve/settings.py
@@ -98,7 +98,7 @@ jobs:
       - name: Run test suite
         run: |
           cd build/assemble
-          ./fl test
+          python manage.py test
       - name: Upload Linux Artifacts
         uses: actions/upload-artifact@v4
         with:
