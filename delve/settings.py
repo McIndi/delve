@@ -390,7 +390,6 @@ DELVE_SEARCH_COMMANDS = {
     'select': 'events.search_commands.select',
     'set': 'events.search_commands.set',
     'sort': 'events.search_commands.sort',
-    'sql_query': 'events.search_commands.sql_query',
     'stats': 'events.search_commands.stats',
     'table': 'events.search_commands.table',
     'transpose': 'events.search_commands.transpose',
