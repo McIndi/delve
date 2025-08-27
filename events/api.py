@@ -174,8 +174,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
 
     def get_queryset(self):
-        # return self.queryset.filter(user=self.request.user)
-        return self.queryset
+        return self.queryset.filter(user=self.request.user)
     
     def get_serializer(self, *args, **kwargs):
         data = kwargs.get('data', None)
