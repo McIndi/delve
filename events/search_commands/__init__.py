@@ -35,5 +35,4 @@ from .merge import merge
 from .eval import eval
 from .events_to_context import events_to_context
 from .resolve import resolve
-from .sql_query import sql_query
 from .replace import replace
