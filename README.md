@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/notesofcliff/delve/actions/workflows/ci.yml/badge.svg)](https://github.com/notesofcliff/delve/actions)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/notesofcliff?style=social)](https://github.com/sponsors/notesofcliff)
+
 # Delve
 
 Delve is a powerful, extensible platform for ingesting, transforming, and searching structured, unstructured, and semi-structured data. It is designed for easy local development, robust production deployments, and seamless integration with modern tools and containerization workflows.
@@ -228,6 +231,12 @@ See `doc/admin/Bootstrap_Guide.md` for full details and extensibility options.
 
 ## Contributing
 Contributions are welcome! Please see the documentation and open an issue or pull request.
+
+## Support
+
+Delve is an open-source project maintained in my spare time. 
+
+If you find it useful, please consider [sponsoring me on GitHub](https://github.com/sponsors/notesofcliff)
 
 ## License
 Delve is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See `doc/LICENSES.txt` for details.
