@@ -5,10 +5,29 @@
 import logging
 import ast
 
-from django.db.models import F, Value, Q, Func
+from django.db.models import F, Value, Q, Func, ExpressionWrapper
 from django.db.models.fields.json import KT
-from django.db.models import CharField, TextField, IntegerField, FloatField, BooleanField, DateField, DateTimeField, TimeField, DecimalField
-from django.db.models import Sum, Avg, Count, Max, Min, StdDev, Variance
+from django.db.models import (
+    DurationField,
+    CharField,
+    TextField,
+    IntegerField,
+    FloatField,
+    BooleanField,
+    DateField,
+    DateTimeField,
+    TimeField,
+    DecimalField,
+)
+from django.db.models import (
+    Sum,
+    Avg,
+    Count,
+    Max,
+    Min,
+    StdDev,
+    Variance,
+)
 from django.db.models.functions import (
     Lower,
     Upper,
@@ -71,6 +90,7 @@ from django.db.models.functions import (
 from events.util import cast
 
 SUPPORTED_FUNCTIONS = {
+    'ExpressionWrapper': ExpressionWrapper,
     'Lower': Lower,
     'Upper': Upper,
     'Length': Length,
@@ -154,6 +174,7 @@ FIELD_CLASSES = {
     'DateTimeField': DateTimeField,
     'TimeField': TimeField,
     'DecimalField': DecimalField,
+    'DurationField': DurationField,
 }
 
 def evaluate_node(node):

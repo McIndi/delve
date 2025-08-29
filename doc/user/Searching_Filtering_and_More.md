@@ -68,6 +68,11 @@ search index=test | qs_group_by extracted_fields__foo extracted_fields__bar coun
 
 # Group records by a field and filter the groups based on an aggregate condition
 search index=test | qs_group_by extracted_fields__foo avg_bar=Avg(Cast(extracted_fields__bar, IntegerField)) | qs_having avg_bar__gt=1
+
+# Filiter records, select nested fields and calculate the difference in days between the created field (index timestamp) and the timestamp field (timestamp from the text of the event)
+search
+| qs_values created event_host=KT(extracted_fields__host) timestamp=KT(extracted_fields__timestamp) message=KT(extracted_fields__msg)
+| qs_annotate index_delay=ExpressionWrapper((F(created)-Cast(timestamp,DateTimeField))/60/60/24,output_field=DurationField)
 ```
 
 ### Explanation
@@ -231,6 +236,21 @@ The `qs_*` commands are designed to modify a Django QuerySet using methods on th
 
 When you use `qs_*` commands, the arguments are parsed into expressions that Django can understand. This means you can use functions and complex expressions to manipulate your data.
 
+### Available Field Classes
+
+The following Django model field classes are available for use in query annotations and transformations (Can be passed to Cast, ExpressionWrapper, etc.):
+
+- `CharField`: For string data.
+- `TextField`: For large text data.
+- `IntegerField`: For integer values.
+- `FloatField`: For floating-point numbers.
+- `BooleanField`: For boolean values.
+- `DateField`: For date values.
+- `DateTimeField`: For date and time values.
+- `TimeField`: For time values.
+- `DecimalField`: For fixed-point decimal numbers.
+- `DurationField`: For time durations and intervals.
+
 ### Special Functions
 
 There are some special functions that are particularly useful for searching, transforming, and visualizing your data:
@@ -254,6 +274,7 @@ There are some special functions that are particularly useful for searching, tra
 - `Func`: The base class for database functions from `django.db.models`. Use
   this when calling functions like `Lower`, `Upper`, `Length`, `Trim`, `Cast`,
   `Coalesce`, `Concat`, or `Now`.
+- `ExpressionWrapper`: Wraps complex expressions (such as arithmetic operations or function calls) for use in queryset annotations. Useful for calculations involving multiple fields or functions.
 
 #### Available Functions
 
