@@ -2,6 +2,7 @@
 # This file is part of the Delve project, which is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0).
 # See the LICENSE file in the root of this repository for details.
 
+import re
 import os
 import sys
 import ssl
@@ -13,9 +14,10 @@ import threading
 import socketserver
 import logging.config
 import multiprocessing
-
-from getpass import getpass
 from pathlib import Path
+from getpass import getpass
+from typing import Dict, Optional
+
 from time import (
     sleep,
     time,
@@ -202,6 +204,46 @@ def parse_argv(argv):
     )
     return parser.parse_args(argv)
 
+# Precompiled regexes for RFC 3164 and RFC 5424
+RFC3164_REGEX = re.compile(
+    r'^<(?P<pri>\d+)>(?P<timestamp>[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2})\s+(?P<host>\S+)\s+(?P<tag>\S+):\s*(?P<msg>.*)$'
+)
+RFC5424_REGEX = re.compile(
+    r'^<(?P<pri>\d+)>(?P<version>\d)\s+(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s+(?P<host>\S+)\s+(?P<appname>\S+)\s+(?P<procid>\S+)\s+(?P<msgid>\S+)\s+(?P<sd>-|\[.*?\])\s*(?P<msg>.*)$'
+)
+
+# Per-host RFC cache
+host_rfc_map: Dict[str, str] = {}
+
+def detect_rfc(message: str) -> Optional[str]:
+    """Detects RFC type for a syslog message."""
+    if RFC5424_REGEX.match(message):
+        return "RFC5424"
+    elif RFC3164_REGEX.match(message):
+        return "RFC3164"
+    return None
+
+def parse_syslog_message(message: str, host: str, logger=None) -> Optional[dict]:
+    """
+    Parses a syslog message, detects RFC, and caches per host. Returns parsed fields or None.
+    Logs errors for unrecognized messages.
+    """
+    rfc_type = host_rfc_map.get(host)
+    if not rfc_type:
+        rfc_type = detect_rfc(message)
+        if rfc_type:
+            host_rfc_map[host] = rfc_type
+    if rfc_type == "RFC5424":
+        match = RFC5424_REGEX.match(message)
+    elif rfc_type == "RFC3164":
+        match = RFC3164_REGEX.match(message)
+    else:
+        match = None
+    if match:
+        return match.groupdict()
+    if logger:
+        logger.warning(f"Unrecognized syslog format from host {host}: {message[:200]}")
+    return None
 
 def main(argv=None):
     listening = False
@@ -282,16 +324,20 @@ def main(argv=None):
         if not sys.stdin.isatty():
             raise ValueError(
                 f"For non-interactive use, you must supply "
-                f"username and password on the command line",
+                f"username and password on the command line "
+                 "or through environment variables: "
+                 "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
             )
         username = input("Please specify username: ")
     if not password:
         if not sys.stdin.isatty():
             raise ValueError(
                 f"For non-interactive use, you must supply "
-                f"username and password on the command line",
+                f"username and password on the command line"
+                 "or through environment variables: "
+                 "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
             )
-        password = getpass.getpass("Please specify password: ")
+        password = getpass("Please specify password: ")
 
     # BUILD COMPUTED VALUES
     starttime = time()
@@ -309,7 +355,8 @@ def main(argv=None):
     log.debug(f"HTTP session initiated")
 
     event_queue = multiprocessing.Queue(maxsize=max_queue_size)
-    log.debug(f"Provisioning listeners")
+    sender_queue = multiprocessing.Queue(maxsize=max_queue_size)
+    log.debug(f"Provisioning listeners and queues")
     class SyslogUDPHandler(socketserver.BaseRequestHandler):
         def handle(self):
             log.debug("Inside handle")
@@ -415,11 +462,18 @@ def main(argv=None):
         def finish(self):
             self.request.close()
 
+    validator_proc = multiprocessing.Process(
+        target=validator_process,
+        args=(event_queue, sender_queue, log_level),
+        daemon=True,
+    )
+    validator_proc.start()
+
     log.debug("Starting sender_process")
     sender_process = multiprocessing.Process(
         target=send_to_delve,
         args=(
-            event_queue,
+            sender_queue,
             url,
             session,
             batch_size,
@@ -428,12 +482,15 @@ def main(argv=None):
         daemon=True,
     )
     sender_process.start()
-    def _terminate_sender():
+
+    def _terminate_processes():
+        validator_proc.terminate()
         sender_process.terminate()
         sleep(5)
+        validator_proc.close()
         sender_process.close()
     log.debug("Registering cleanup function for future exit")
-    atexit.register(_terminate_sender)
+    atexit.register(_terminate_processes)
 
     try:
         if udp:
@@ -486,12 +543,30 @@ def main(argv=None):
             tcp_server.server_close()
     return 0
 
-def send_to_delve(event_queue, url, session, batch_size, log_level):
-    # configure_logging(level=log_level, filename=LOG_DIRECTORY / f'sender-{os.getpid()}.log')
+def validator_process(event_queue, sender_queue, log_level):
+    """
+    Validates and parses events from event_queue, pushes valid ones to sender_queue.
+    Drops invalid events and logs a warning.
+    """
     log = logging.getLogger(__name__)
-    # logging.basicConfig(filename=LOG_DIRECTORY / 'sender.log', level=logging.DEBUG)
+    logging.config.dictConfig(get_logging_config(log_level, LOG_DIRECTORY / f'validator-{os.getpid()}.log'))
+    while True:
+        try:
+            event = event_queue.get()
+            host = event.get("host")
+            text = event.get("text")
+            extracted = parse_syslog_message(text, host, logger=log)
+            if extracted:
+                event["extracted_fields"] = extracted
+                sender_queue.put(event)
+            else:
+                log.warning(f"Dropping invalid syslog event from host {host}: {text[:200]}")
+        except Exception as e:
+            log.error(f"Validator process error: {e}")
+
+def send_to_delve(event_queue, url, session, batch_size, log_level):
+    log = logging.getLogger(__name__)
     logging.config.dictConfig(get_logging_config(log_level, LOG_DIRECTORY / f'sender-{os.getpid()}.log'))
-    # log.debug(f"Found {log_level=}, {LOG_DIRECTORY / f'sender-{os.getpid()}.log'}")
     timeout = 1 # seconds
     current_batch = []
     while True:
