@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/notesofcliff/delve/actions/workflows/ci.yml/badge.svg)](https://github.com/notesofcliff/delve/actions)
+[![Build Status](https://github.com/notesofcliff/delve/actions/workflows/release.yml/badge.svg)](https://github.com/notesofcliff/delve/actions)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/notesofcliff?style=social)](https://github.com/sponsors/notesofcliff)
 
 # Delve
