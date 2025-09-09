@@ -60,7 +60,7 @@ def get_logging_config(level, filename):
                 },
             },
             "loggers": {
-                f"{__name__}": {
+                __name__: {
                     "handlers": ["file", "console"],
                     "level": level,
                 },
@@ -202,47 +202,76 @@ def parse_argv(argv):
         default=int(os.getenv("SYSLOG_RECEIVER_MAX_QUEUE_SIZE", 10_000)),
         help="The max number of events waiting to be uploaded to delve",
     )
+    parser.add_argument(
+        "--allow-basic",
+        action="store_true",
+        default=os.getenv("SYSLOG_RECEIVER_ALLOW_BASIC", "false").lower() in ("1", "true", "yes"),
+        help="If specified, will allow BASIC_SYSLOG messages (a more permissive format) to be parsed",
+    )
     return parser.parse_args(argv)
 
 # Precompiled regexes for RFC 3164 and RFC 5424
 RFC3164_REGEX = re.compile(
-    r'^<(?P<pri>\d+)>(?P<timestamp>[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2})\s+(?P<host>\S+)\s+(?P<tag>\S+):\s*(?P<msg>.*)$'
+    r'^<(?P<pri>\d+)>'                        # <PRI>
+    r'(?P<timestamp>'
+    r'[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2})\s+' # e.g., "Sep  5 06:50:27"
+    r'(?P<host>\S+)\s+(?P<tag>\S+):\s*(?P<msg>.*)$' # HOST TAG: MSG
 )
 RFC5424_REGEX = re.compile(
-    r'^<(?P<pri>\d+)>(?P<version>\d)\s+(?P<timestamp>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s+(?P<host>\S+)\s+(?P<appname>\S+)\s+(?P<procid>\S+)\s+(?P<msgid>\S+)\s+(?P<sd>-|\[.*?\])\s*(?P<msg>.*)$'
+    r'^<(?P<pri>\d+)>'                       # <PRI>
+    r'(?P<version>\d)\s+'                   # VERSION
+    r'(?P<timestamp>'
+    r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s+' # e.g., "2003-10-11T22:14:15.003Z"
+    r'(?P<host>\S+)\s+(?P<appname>\S+)\s+'  # HOST APP-NAME
+    r'(?P<procid>\S+)\s+(?P<msgid>\S+)\s+' # PROCID MSGID
+    r'(?P<sd>-|\[.*?\])\s*(?P<msg>.*)$' # STRUCTURED-DATA MSG (optional)
 )
-
+BASIC_SYSLOG = re.compile(
+    r'^<(?P<pri>\d+)>'                         # <PRI>
+    r'(?:(?P<version>\d+)\s+)?'                # optional VERSION
+    r'(?P<timestamp>('
+        r'\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:[.,]\d+)?(?:Z|[+-]\d{2}:?\d{2})?'  # ISO/RFC3339 (with optional frac + TZ)
+        r'|[A-Z][a-z]{2}\s+\d{1,2}\s+\d{2}:\d{2}:\d{2}'                                # RFC3164 style (e.g., "Sep  5 06:50:27")
+        r'|\d{10}(?:\.\d+)?'                                                          # Unix epoch seconds (optional .fractions)
+        r'|\d{4}/\d{2}/\d{2}\s+\d{2}:\d{2}:\d{2}'                                     # 2025/09/05 06:50:27
+        r'|\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}'                                     # 2025-09-05 06:50:27
+    r'))\s+(?P<message>.*)$'
+)
 # Per-host RFC cache
 host_rfc_map: Dict[str, str] = {}
 
-def detect_rfc(message: str) -> Optional[str]:
+def detect_rfc(message: str, allow_basic: bool = False) -> Optional[str]:
     """Detects RFC type for a syslog message."""
     if RFC5424_REGEX.match(message):
         return "RFC5424"
     elif RFC3164_REGEX.match(message):
         return "RFC3164"
+    elif allow_basic and BASIC_SYSLOG.match(message):
+        return "BASIC_SYSLOG"
     return None
 
-def parse_syslog_message(message: str, host: str, logger=None) -> Optional[dict]:
+def parse_syslog_message(message: str, host: str, logger: Optional[logging.Logger]=None, allow_basic: bool=False) -> Optional[dict]:
     """
     Parses a syslog message, detects RFC, and caches per host. Returns parsed fields or None.
     Logs errors for unrecognized messages.
     """
     rfc_type = host_rfc_map.get(host)
     if not rfc_type:
-        rfc_type = detect_rfc(message)
+        rfc_type = detect_rfc(message, allow_basic=True)
         if rfc_type:
             host_rfc_map[host] = rfc_type
     if rfc_type == "RFC5424":
         match = RFC5424_REGEX.match(message)
     elif rfc_type == "RFC3164":
         match = RFC3164_REGEX.match(message)
+    elif allow_basic and rfc_type == "BASIC_SYSLOG":
+        match = BASIC_SYSLOG.match(message)
     else:
         match = None
     if match:
         return match.groupdict()
     if logger:
-        logger.warning(f"Unrecognized syslog format from host {host}: {message[:200]}")
+        logger.warning("Unrecognized syslog format from host %s: %s", host, message[:200])
     return None
 
 def main(argv=None):
@@ -257,58 +286,61 @@ def main(argv=None):
     log = logging.getLogger(__name__)
 
     server = args.server
-    log.debug(f"Found {server=}")
+    log.debug("Found server: %s", server)
 
     server_endpoint = args.server_endpoint
-    log.debug(f"Found {server_endpoint=}")
+    log.debug("Found server_endpoint: %s", server_endpoint)
 
     no_verify = args.no_verify
-    log.debug(f"Found {no_verify=}")
+    log.debug("Found no_verify: %s", no_verify)
 
     index = args.index
-    log.debug(f"Found {index=}")
+    log.debug("Found index: %s", index)
 
     host = args.host
-    log.debug(f"Found {host=}")
+    log.debug("Found host: %s", host)
 
     source = args.source
-    log.debug(f"Found {source=}")
+    log.debug("Found source: %s", source)
 
     sourcetype = args.sourcetype
-    log.debug(f"Found {sourcetype=}")
+    log.debug("Found sourcetype: %s", sourcetype)
 
     udp = args.udp
-    log.debug(f"Found {udp=}")
+    log.debug("Found udp: %s", udp)
 
     tcp = args.tcp
-    log.debug(f"Found {tcp=}")
+    log.debug("Found tcp: %s", tcp)
 
     tcp_port = args.tcp_port
-    log.debug(f"Found {tcp_port=}")
+    log.debug("Found tcp_port: %s", tcp_port)
 
     tcp_cert = args.tcp_cert
-    log.debug(f"Found {tcp_cert=}")
+    log.debug("Found tcp_cert: %s", tcp_cert)
 
     tcp_key = args.tcp_key
-    log.debug(f"Found {tcp_key=}")
+    log.debug("Found tcp_key: %s", tcp_key)
 
     udp_port = args.udp_port
-    log.debug(f"Found {udp_port=}")
+    log.debug("Found udp_port: %s", udp_port)
 
     hostname = args.hostname
-    log.debug(f"Found {hostname=}")
+    log.debug("Found hostname: %s", hostname)
 
     sourcetype = args.sourcetype
-    log.debug(f"Found {sourcetype=}")
+    log.debug("Found sourcetype: %s", sourcetype)
 
     batch_size = args.batch_size
-    log.debug(f"Found {batch_size=}")
+    log.debug("Found batch_size: %s", batch_size)
 
     max_queue_size = args.max_queue_size
-    log.debug(f"Found {max_queue_size=}")
+    log.debug("Found max_queue_size: %s", max_queue_size)
+
+    allow_basic = args.allow_basic
+    log.debug("Found allow_basic: %s", allow_basic)
 
     line_ending = args.line_ending
-    log.debug(f"Found {line_ending=}")
+    log.debug("Found line_ending: %s", line_ending)
     if line_ending == "windows":
         line_ending = "\r\n"
     elif line_ending == "linux":
@@ -317,49 +349,48 @@ def main(argv=None):
         line_ending = "\r"
 
     username = args.username
-    log.debug(f"Found {username=}")
+    log.debug("Found username: %s", username)
     password = args.password
 
     if not username:
         if not sys.stdin.isatty():
             raise ValueError(
-                f"For non-interactive use, you must supply "
-                f"username and password on the command line "
-                 "or through environment variables: "
-                 "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
+                "For non-interactive use, you must supply "
+                "username and password on the command line "
+                "or through environment variables: "
+                "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
             )
         username = input("Please specify username: ")
     if not password:
         if not sys.stdin.isatty():
             raise ValueError(
-                f"For non-interactive use, you must supply "
-                f"username and password on the command line"
-                 "or through environment variables: "
-                 "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
+                "For non-interactive use, you must supply "
+                "username and password on the command line "
+                "or through environment variables: "
+                "SYSLOG_RECEIVER_DELVE_USERNAME and SYSLOG_RECEIVER_DELVE_PASSWORD",
             )
         password = getpass("Please specify password: ")
 
     # BUILD COMPUTED VALUES
     starttime = time()
-    log.info(f"start: {starttime}")
+    log.info("start: %s", starttime)
 
     url = f"{server}{server_endpoint}"
-    log.debug(f"Found url: {url}")
+    log.debug("Found url: %s", url)
     basic_auth = requests.auth.HTTPBasicAuth(username, password)
 
     session = requests.Session()
     if no_verify:
-        log.warning(f"Hostname verification has been disabled")
+        log.warning("Hostname verification has been disabled")
         session.verify = False
     session.auth = basic_auth
-    log.debug(f"HTTP session initiated")
+    log.debug("HTTP session initiated")
 
     event_queue = multiprocessing.Queue(maxsize=max_queue_size)
     sender_queue = multiprocessing.Queue(maxsize=max_queue_size)
-    log.debug(f"Provisioning listeners and queues")
+    log.debug("Provisioning listeners and queues")
     class SyslogUDPHandler(socketserver.BaseRequestHandler):
         def handle(self):
-            log.debug("Inside handle")
             nonlocal index
             nonlocal source
             nonlocal sourcetype
@@ -367,7 +398,7 @@ def main(argv=None):
 
             # data = bytes.decode(self.request[0].strip())
             data = self.request[0].strip().decode()
-            log.debug(f"Found {data=}")
+            log.debug("Found data: %s", data)
             # socket = self.request[1]
             if host:
                 item = {
@@ -386,6 +417,7 @@ def main(argv=None):
                     "text": data,
                 }
             event_queue.put(item)
+            log.info("Added event to event_queue: %s", event_queue.qsize())
 
     # class SyslogTCPServer(socketserver.TCPServer):
     class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
@@ -406,18 +438,18 @@ def main(argv=None):
                 self.ssl_context.load_cert_chain(self.certfile, self.keyfile)
                 log.debug("TLS configured successfully")
             except Exception as e:
-                log.error(f"Failed to configure TLS: {e}")
+                log.error("Failed to configure TLS: %s", e)
                 self.ssl_context = None
 
         def get_request(self):
-            log.debug("Received request")
+            log.info("Received new message")
             (socket, addr) = super().get_request()
             if self.ssl_context:
                 try:
                     socket = self.ssl_context.wrap_socket(socket, server_side=True)
                     log.debug("TLS handshake completed")
                 except ssl.SSLError as e:
-                    log.error(f"TLS handshake failed: {e}")
+                    log.error("TLS handshake failed: %s", e)
                     socket.close()
                     raise
             return socket, addr
@@ -437,10 +469,11 @@ def main(argv=None):
             socketserver.StreamRequestHandler.__init__(self, *args, **kwargs)
 
         def handle(self):
-            log.debug("In handle")
+            log.info("In handle")
+            log.info("Event queue size: %s", self.queue.qsize())
             for line in self.rfile:
                 line = line.decode().strip()
-                log.debug(f"Found {line=}")
+                log.debug("Found line: %s", line)
                 if host:
                     item = {
                         "index": index,
@@ -458,13 +491,14 @@ def main(argv=None):
                         "text": line,
                     }
                 self.queue.put(item)
+                log.info("Added event to event_queue: %s", self.queue.qsize())
 
         def finish(self):
             self.request.close()
 
     validator_proc = multiprocessing.Process(
         target=validator_process,
-        args=(event_queue, sender_queue, log_level),
+        args=(event_queue, sender_queue, log_level, allow_basic),
         daemon=True,
     )
     validator_proc.start()
@@ -492,6 +526,10 @@ def main(argv=None):
     log.debug("Registering cleanup function for future exit")
     atexit.register(_terminate_processes)
 
+    tcpThread = None
+    tcp_server = None
+    udpThread = None
+    udpServer = None
     try:
         if udp:
             # UDP server
@@ -519,12 +557,12 @@ def main(argv=None):
         
         while True:
             log.debug("At the top of the main loop")
-            if tcp and not tcpThread.is_alive():
+            if tcp and isinstance(tcpThread, threading.Thread) and isinstance(tcp_server, ThreadedTCPServer) and not tcpThread.is_alive():
                 log.debug("Restarting TCP listener")
                 tcpThread = threading.Thread(target=tcp_server.serve_forever)
                 tcpThread.daemon = True
                 tcpThread.start()
-            if udp and not udpThread.is_alive():
+            if udp and isinstance(udpThread, threading.Thread) and isinstance(udpServer, socketserver.UDPServer) and not udpThread.is_alive():
                 log.debug("Restarting UDP listener")
                 udpThread = threading.Thread(target=udpServer.serve_forever)
                 udpThread.daemon = True
@@ -535,34 +573,46 @@ def main(argv=None):
     except KeyboardInterrupt:
         log.warning("Crtl+C Pressed. Shutting down.")
         # listening = False
-        if udp:
+        if udp and udpServer:
             udpServer.shutdown()
             udpServer.server_close()
-        if tcp:
+        if tcp and tcp_server:
             tcp_server.shutdown()
             tcp_server.server_close()
     return 0
 
-def validator_process(event_queue, sender_queue, log_level):
+def validator_process(event_queue, sender_queue, log_level, allow_basic):
     """
     Validates and parses events from event_queue, pushes valid ones to sender_queue.
     Drops invalid events and logs a warning.
     """
+    import queue
     log = logging.getLogger(__name__)
     logging.config.dictConfig(get_logging_config(log_level, LOG_DIRECTORY / f'validator-{os.getpid()}.log'))
     while True:
+        drained = 0
         try:
-            event = event_queue.get()
-            host = event.get("host")
-            text = event.get("text")
-            extracted = parse_syslog_message(text, host, logger=log)
-            if extracted:
-                event["extracted_fields"] = extracted
-                sender_queue.put(event)
-            else:
-                log.warning(f"Dropping invalid syslog event from host {host}: {text[:200]}")
+            # Block briefly to avoid tight spin when idle.
+            event = event_queue.get(timeout=0.1)
+            while True:
+                # process first event then drain the rest without sleeping
+                host = event.get("host")
+                text = event.get("text")
+                extracted = parse_syslog_message(text, host, logger=log, allow_basic=allow_basic)
+                if extracted:
+                    event["extracted_fields"] = extracted
+                    sender_queue.put(event)
+                    log.debug("→ sender_queue size ~ %s", sender_queue.qsize())
+                drained += 1
+                # Grab next if available; break when empty
+                event = event_queue.get_nowait()
+        except queue.Empty:
+            if drained == 0:
+                # only back off when we truly had nothing to do
+                sleep(0.01)
+            # else immediately loop to keep up
         except Exception as e:
-            log.error(f"Validator process error: {e}")
+            log.exception("Validator error: %s", e)
 
 def send_to_delve(event_queue, url, session, batch_size, log_level):
     log = logging.getLogger(__name__)
@@ -574,29 +624,29 @@ def send_to_delve(event_queue, url, session, batch_size, log_level):
         while len(current_batch) < batch_size:
             try:
                 log.debug("Trying to get an item")
-                item = event_queue.get(timeout=timeout)
-                log.debug(f"Got item, appending to current_batch")
+                item = event_queue.get_nowait()
                 current_batch.append(item)
-                log.debug(f"Got {item=}")
+                log.info("Appended item to current_batch: %s, %s", len(current_batch), event_queue.qsize())
             except queue.Empty:
-                log.debug("Queue was empty")
-                if len(current_batch) > 0:
+                log.info("Queue was empty")
+                if current_batch:
                     try:
                         log.debug("Sending request to delve")
                         response = session.post(
                             url,
                             json=current_batch,
                         )
-                        log.debug(f"Received {response=}")
+                        log.debug("Received response: %s", response.status_code)
                     except Exception as e:
-                        log.debug(f"Exception raised: {e=}")
+                        log.debug("Exception raised: %s", e)
                         raise
                     log.debug("clearing current_batch")
                     current_batch.clear()
                     break
-                sleep(0.25)
-        log.debug("Batch size reached, sending to delve")
-        if len(current_batch) > 0:
+                else:
+                    sleep(0.025)
+        log.info("Batch size reached, sending to delve")
+        if current_batch:
             response = session.post(
                 url,
                 json=current_batch,
