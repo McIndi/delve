@@ -1,0 +1,94 @@
+
+/* Dense UI – drop-in stylesheet */
+/* Attach by adding class="dense" to <body> (done in patched HTML below). */
+
+.dense {
+  --dense-font-size: 0.925rem;
+  --dense-line-height: 1.25;
+  --dense-pad-y: 0.25rem;
+  --dense-pad-x: 0.5rem;
+}
+
+/* Typography + shared controls */
+.dense, .dense .form-control, .dense .btn, .dense .nav-link, .dense .dropdown-item, .dense .form-select {
+  font-size: var(--dense-font-size);
+  line-height: var(--dense-line-height);
+}
+
+/* Buttons, navs, dropdown items */
+.dense .btn,
+.dense .nav-link,
+.dense .dropdown-item {
+  padding: var(--dense-pad-y) var(--dense-pad-x);
+}
+
+/* Containers & cards */
+.dense .container, 
+.dense .container-fluid, 
+.dense .card, 
+.dense .accordion-item, 
+.dense .modal-body,
+.dense .modal-header,
+.dense .modal-footer {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.dense .card-body { padding: 0.5rem; }
+.dense .card-header, .dense .card-footer { padding: 0.5rem 0.5rem; }
+
+/* Tables */
+.dense table.table > :not(caption) > * > * {
+  padding: 0.25rem 0.5rem;
+}
+.dense .table { margin-bottom: 0.75rem; }
+.dense th, .dense td {
+  vertical-align: middle;
+  white-space: nowrap; /* labels/data stay on one line by default */
+}
+/* Opt-in wrapping inside cells when needed */
+.dense td .text-wrap, .dense th .text-wrap { white-space: normal; }
+
+/* Forms */
+.dense .form-label { margin-bottom: 0.25rem; }
+.dense .form-text { margin-top: 0.25rem; }
+
+/* Headings (inside dense areas) */
+.dense h1, .dense h2, .dense h3, .dense h4, .dense h5 { 
+  margin-top: 0.5rem; 
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+/* Navbar / sidebar trims */
+.dense .navbar, .dense .sb-sidenav { 
+  padding-top: 0.25rem; 
+  padding-bottom: 0.25rem; 
+}
+.dense .navbar .navbar-brand { margin-right: 0.5rem; }
+.dense .sb-sidenav .btn, .dense .sb-sidenav .btn-toggle {
+  padding: 0.25rem 0.5rem;
+}
+
+/* Badges / pills / small labels */
+.dense .badge, .dense .btn-sm, .dense .form-control-sm, .dense .form-select-sm {
+  padding: 0.15rem 0.35rem;
+}
+
+/* Flush accordions (Bootstrap) */
+.accordion.accordion-flush .accordion-item {
+  border: 0;
+}
+
+/* Utilities */
+.nowrap { white-space: nowrap !important; }
+.wrap   { white-space: normal !important; }
+.compact-gap > * + * { margin-left: 0.375rem; }
+
+/* Inputs in inline toolbars */
+.dense .toolbar input.form-control,
+.dense .toolbar .form-select {
+  height: 2rem;
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
