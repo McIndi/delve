@@ -11,9 +11,8 @@ import subprocess
 import logging
 import argparse
 import pathlib
-import requests
 import hashlib
-from typing import List
+from typing import List, Optional, Sequence, Tuple
 
 from delve import __version__ as DELVE_VERSION
 
@@ -69,6 +68,45 @@ def get_file_sha256(p):
             sha256.update(data)
     return sha256.hexdigest()
 
+
+def parse_cpython_asset_version(asset_name: str) -> Optional[Tuple[int, int, int]]:
+    """Return a stable CPython version tuple from an asset name.
+
+    Pre-release assets such as alpha, beta, and release candidate builds are
+    rejected by returning ``None``.
+    """
+    match = re.search(
+        r'cpython-(?P<version>\d+\.\d+\.\d+)(?P<suffix>[A-Za-z]+\d+)?(?=[^0-9A-Za-z]|$)',
+        asset_name,
+    )
+    if not match or match.group('suffix'):
+        return None
+    return tuple(int(part) for part in match.group('version').split('.'))
+
+
+def select_python_release_asset(
+    release_names: Sequence[str],
+    platform_tag: str,
+    architecture: str = 'x86_64',
+) -> Optional[str]:
+    """Select the newest stable standalone CPython asset for a platform."""
+    matching_assets = [
+        name for name in release_names
+        if 'install_only_stripped' in name
+        and platform_tag in name
+        and architecture in name
+    ]
+    stable_assets = [
+        (name, version)
+        for name in matching_assets
+        for version in [parse_cpython_asset_version(name)]
+        if version is not None
+    ]
+    stable_assets.sort(key=lambda item: item[1], reverse=True)
+    if not stable_assets:
+        return None
+    return stable_assets[0][0]
+
 # --- Subcommand Implementations ---
 def clean(args):
     """Clean up build artifacts and other specified files/directories."""
@@ -114,11 +152,20 @@ def download_python(args):
     plat, plat_str = get_platform()
     target_dir = args.target_dir.resolve()
     target_dir.mkdir(parents=True, exist_ok=True)
-    latest_release_url = "https://raw.githubusercontent.com/indygreg/python-build-standalone/latest-release/latest-release.json"
+    if args.dry_run:
+        logging.info(
+            "Dry run: Would download the latest stable Python standalone "
+            f"release and SHA256SUMS to {target_dir}"
+        )
+        return
+
+    import requests
+
+    latest_release_url = "https://raw.githubusercontent.com/astral-sh/python-build-standalone/latest-release/latest-release.json"
     logging.debug(f"Fetching latest release tag from: {latest_release_url}")
     tag = requests.get(latest_release_url).json()["tag"]
     logging.debug(f"Latest release tag: {tag}")
-    github_api_url = f"https://api.github.com/repos/indygreg/python-build-standalone/releases/tags/{tag}"
+    github_api_url = f"https://api.github.com/repos/astral-sh/python-build-standalone/releases/tags/{tag}"
     logging.debug(f"Fetching release assets from: {github_api_url}")
     headers = {
         'X-GitHub-Api-Version': '2022-11-28',
@@ -127,17 +174,11 @@ def download_python(args):
     assets = requests.get(github_api_url, headers=headers).json()["assets"]
     release_names = [a["name"] for a in assets]
     logging.debug(f"Release asset names: {release_names}")
-    filtered = [n for n in release_names if "install_only_stripped" in n and plat_str in n and "x86_64" in n]
-    filtered = [n for n in filtered if not re.search(r'cpython-(\d+\.\d+\.\d+rc\d+)', n)]
-    logging.debug(f"Filtered asset names: {filtered}")
-    def extract_version(name):
-        m = re.search(r'cpython-(\d+\.\d+\.\d+)', name)
-        return tuple(map(int, m.group(1).split('.'))) if m else (0, 0, 0)
-    filtered.sort(key=extract_version, reverse=True)
-    if not filtered:
+    release_file = select_python_release_asset(release_names, plat_str)
+    logging.debug(f"Selected stable release asset: {release_file}")
+    if not release_file:
         logging.error(f"No suitable release found for platform: {plat}")
         sys.exit(1)
-    release_file = filtered[0]
     hash_file = "SHA256SUMS"
     def asset_url(name):
         for a in assets:
@@ -156,9 +197,6 @@ def download_python(args):
     release_file_path = target_dir.joinpath(release_file)
     logging.debug(f"Local hash file path: {hash_file_path}")
     logging.debug(f"Local release file path: {release_file_path}")
-    if args.dry_run:
-        logging.info(f"Dry run: Would download {release_file_url} and {hash_file_url} to {target_dir}")
-        return
     with open(hash_file_path, "wb") as fp:
         fp.write(requests.get(hash_file_url, headers=asset_headers).content)
     with open(release_file_path, "wb") as fp:
@@ -339,7 +377,9 @@ def package(args):
     else:
         # Linux and MacOS
         packaged_python = packaged_python / "bin" / "python3"
-    python_version = subprocess.check_output([str(packaged_python), "--version"]).decode().strip().split()[1]
+    python_version = "unknown"
+    if not args.dry_run:
+        python_version = subprocess.check_output([str(packaged_python), "--version"]).decode().strip().split()[1]
 
     zip_name = args.output or dist_dir / f"DELVE_v{DELVE_VERSION}_cpython-{python_version}_{plat}.zip"
     exclude_patterns = ["node_modules", ".git", "*.log", "__pycache__", "build", "dist"]

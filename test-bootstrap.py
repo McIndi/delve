@@ -8,6 +8,8 @@ import tempfile
 import pathlib
 import sys
 
+import bootstrap
+
 BOOTSTRAP = pathlib.Path(__file__).parent / "bootstrap.py"
 PYTHON = pathlib.Path(sys.executable)
 
@@ -51,6 +53,37 @@ class TestBootstrap(unittest.TestCase):
         ])
         self.assertEqual(result.returncode, 0)
         self.assertTrue("Would download" in result.stdout or result.stderr)
+
+
+    def test_parse_cpython_asset_version_rejects_prereleases(self):
+        prerelease_assets = [
+            "cpython-3.14.0a5+20250212-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.14.0b2+20250212-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.14.0rc3+20250212-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        ]
+
+        for asset_name in prerelease_assets:
+            with self.subTest(asset_name=asset_name):
+                self.assertIsNone(bootstrap.parse_cpython_asset_version(asset_name))
+
+
+    def test_select_python_release_asset_prefers_latest_stable(self):
+        release_names = [
+            "cpython-3.13.2+20250101-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.13.3rc1+20250115-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.13.3+20250120-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+            "cpython-3.13.4a1+20250125-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        ]
+
+        selected_asset = bootstrap.select_python_release_asset(
+            release_names,
+            "windows-msvc",
+        )
+
+        self.assertEqual(
+            selected_asset,
+            "cpython-3.13.3+20250120-x86_64-pc-windows-msvc-install_only_stripped.tar.gz",
+        )
 
 
     def test_extract_python_dry_run(self):
