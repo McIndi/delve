@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/notesofcliff/delve/actions/workflows/release.yml/badge.svg)](https://github.com/notesofcliff/delve/actions)
+[![Build Status](https://github.com/McIndi/delve/actions/workflows/release.yml/badge.svg)](https://github.com/McIndi/delve/actions)
 [![GitHub Sponsors](https://img.shields.io/github/sponsors/notesofcliff?style=social)](https://github.com/sponsors/notesofcliff)
 
 # Delve
@@ -26,7 +26,7 @@ Delve is a powerful, extensible platform for ingesting, transforming, and search
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/notesofcliff/delve
+git clone https://github.com/McIndi/delve
 cd delve
 ```
 
