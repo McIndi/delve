@@ -33,6 +33,9 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: downcase REPO
+        run: |
+          echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >>${GITHUB_ENV}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -41,7 +44,7 @@ jobs:
           file: Dockerfile
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           tags: |
-            ghcr.io/${{ github.repository_owner|lower }}/delve:${{ env.VERSION }}
-            ghcr.io/${{ github.repository_owner|lower }}/delve:latest
+            ghcr.io/${{ env.REPO_OWNER }}/delve:${{ env.VERSION }}
+            ghcr.io/${{ env.REPO_OWNER }}/delve:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
