@@ -18,7 +18,8 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.utils.module_loading import import_string
 
-from jinja2 import Environment
+from jinja2.exceptions import SecurityError
+from jinja2.sandbox import SandboxedEnvironment
 from uuid_utils import uuid7
 
 from .validators import JsonObjectValidator
@@ -188,7 +189,7 @@ class Query(models.Model):
         else:
             matching_events = []
         log.debug(f"Provisioning jinja2 context")
-        environment = Environment()
+        environment = SandboxedEnvironment()
         environment.trim_blocks = True
         environment.lstrip_blocks = True
         environment.strip_trailing_newlines = True
@@ -214,7 +215,11 @@ class Query(models.Model):
         # catch any output from exceptions
         for search_command, operation in search_commands:
             log.debug(f"Found search_command: {search_command}")
-            search_command = environment.from_string(search_command, globals=environment_globals).render(context)
+            try:
+                search_command = environment.from_string(search_command, globals=environment_globals).render(context)
+            except SecurityError as exception:
+                # The resolve API exposes exception text in its existing error shape.
+                raise SecurityError(f"SecurityError: {exception}") from exception
             log.debug(f"Rendered search_command: {search_command}")
             argv = shlex.split(search_command, comments=True)
             log.debug("swapping stdout and stderr")

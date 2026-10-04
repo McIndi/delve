@@ -155,6 +155,22 @@ search --index {{ index }} text__icontains="{{ keyword }}"
 
 In this example, `{{ index }}` and `{{ keyword }}` are Jinja2 template variables that will be replaced with their corresponding values from the context.
 
+Search-command templates run in a Jinja2 sandbox. Context variables, filters,
+and control blocks remain available, but access to Python internals such as
+`__class__` and `__globals__` is restricted. Direct interpolation of a missing
+variable still renders an empty string; the `default` filter can supply a
+fallback. To use a filter in a query,
+escape its pipe as `||`, for example `echo "{{ keyword||upper }}"`.
+
+A sandbox violation that raises `SecurityError` stops the pipeline before the
+offending command or any later command executes. The resolve API reports it in
+its existing `[{"exception": "SecurityError: ..."}]` response with HTTP 200;
+direct saved-query execution propagates the exception. Earlier commands are not rolled
+back. Some direct accesses to restricted attributes render an empty value
+instead of raising an exception. The template sandbox does not provide
+comprehensive resource-exhaustion protection or restrict the capabilities of
+the search commands themselves.
+
 This can be useful for including different sets of arguments to the same search
 command to get different results or behavior. Combined with the `query_table`
 and `query_chart` templatetags, a Django `Form` instance can be rendered in a
